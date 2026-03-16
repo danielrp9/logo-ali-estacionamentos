@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Pagamento Concluído</title>
+    <meta http-equiv="refresh" content="5;url={% url 'estacionamento:lista_veiculos' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Oswald:wght@500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .page-title {
+            font-family: 'Oswald', sans-serif;
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .vehicle-info {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+
+        .info-row {
+            display: flex;
+            margin-bottom: 0.8rem;
+        }
+
+        .info-label {
+            font-weight: 600;
+            width: 150px;
+            color: #7ED957;
+        }
+
+        .payment-summary {
+            background: #f0f8ff;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+
+        .total-amount {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+            text-align: center;
+            margin: 1.5rem 0;
+        }
+
+        .btn-pay {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            background-color: #7ED957;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .btn-pay:hover {
+            background-color: #6bc34d;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 1rem;
+            color: #2c3e50;
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="page-title">Pagamento Concluído</h1>
+
+        <div class="vehicle-info">
+            <div class="info-row">
+                <div class="info-label">Veículo:</div>
+                <div>{{ veiculo.placa }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Tempo Estacionado:</div>
+                <div>{{ horas_estacionado }} hora(s)</div>
+            </div>
+        </div>
+
+        <div class="payment-summary">
+            <div class="total-amount">Valor Pago: R$ {{ valor_pago }}</div>
+            <p style="text-align: center;">Você será redirecionado automaticamente em 5 segundos...</p>
+        </div>
+
+        <a href="{% url 'estacionamento:lista_veiculos' %}" class="btn-pay">Voltar Agora</a>
+    </div>
+</body>
+</html>

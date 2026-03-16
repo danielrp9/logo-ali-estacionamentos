@@ -1,0 +1,20 @@
+# --- BACKEND (logo-ali-app) ---
+logo-ali-app/venv/
+venv/
+*.pyc
+__pycache__/
+logo-ali-app/db.sqlite3
+logo-ali-app/.env
+.env
+
+# --- FRONTEND (frontend) ---
+frontend/node_modules/
+frontend/dist/
+frontend/.eslintcache
+node_modules/
+
+# --- SISTEMA E IDES ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
