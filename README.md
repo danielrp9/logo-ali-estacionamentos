@@ -48,7 +48,7 @@ source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### 3. Configuração do Stripe (Obrigatório para Auditoria)
+### 3. Configuração do Stripe 
 Como o sistema utiliza o Stripe para o fluxo de checkout, é necessário gerar uma chave de teste:
 
 1.  Acesse o [Dashboard do Stripe](https://dashboard.stripe.com/register) e crie uma conta (gratuita).
