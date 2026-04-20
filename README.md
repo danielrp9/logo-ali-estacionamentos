@@ -1,4 +1,4 @@
-# 🚗 Logo Ali Estacionamentos
+# Logo Ali Estacionamentos
 
 Sistema de **gerenciamento inteligente de estacionamentos** desenvolvido como um ecossistema **Full-Stack (Django + React)** para a disciplina de **Engenharia Web**.
 
@@ -6,7 +6,7 @@ O **Logo Ali** oferece controle de pátio em tempo real, auditoria de movimenta�
 
 ---
 
-# 🗂️ Estrutura do Projeto
+# Estrutura do Projeto
 
 O sistema foi arquitetado de forma unificada. O **Django** atua como API REST e também como servidor dos arquivos estáticos do **React**, permitindo que todo o sistema seja acessado através de uma única porta.
 
@@ -24,7 +24,7 @@ logo-ali-project/
 
 ---
 
-# ⚙️ Requisitos para Execução
+# Requisitos para Execução
 
 * **Python 3.10+**
 * **Node.js 18+** e **npm**
@@ -32,7 +32,7 @@ logo-ali-project/
 
 ---
 
-# 🚀 Guia de Instalação e Auditoria
+# Guia de Instalação e Auditoria
 
 ### 1. Clonar o Repositório
 ```bash
@@ -81,7 +81,7 @@ npm run build
 
 ---
 
-# 🖥️ Execução do Sistema
+# Execução do Sistema
 
 Com o ambiente virtual ativado e na pasta `logo-ali-app`, inicie o servidor:
 ```bash
@@ -89,13 +89,13 @@ python manage.py runserver
 ```
 
 **Acesse o sistema unificado em:**
-👉 [http://127.0.0.1:8000](http://127.0.0.1:8000)
+[http://127.0.0.1:8000](http://127.0.0.1:8000)
 
 > **Nota para Testes de Pagamento:** Ao realizar um checkout, utilize os números de [cartões de teste oficiais do Stripe](https://docs.stripe.com/testing) (Ex: Cartão `4242 4242 4242 4242`, qualquer validade futura e CVC `123`).
 
 ---
 
-# ✨ Funcionalidades para Análise
+# Funcionalidades para Análise
 
 * **Pátio em Tempo Real**: Monitoramento dinâmico de veículos ativos.
 * **Checkout Stripe**: Integração completa com gateway de pagamento (Modo Teste).
@@ -104,7 +104,7 @@ python manage.py runserver
 
 ---
 
-# 👨‍💻 Autor
+# Autor
 
 **Daniel Rodrigues Pereira**
 Acadêmico de **Sistemas de Informação** — **UFVJM (Diamantina, MG)**.
