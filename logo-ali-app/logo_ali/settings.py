@@ -8,7 +8,6 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -49,7 +48,10 @@ ROOT_URLCONF = 'logo_ali.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'static/dist'), # Onde o index.html do React ficará
+            os.path.join(BASE_DIR, 'templates'),    # Mantém sua pasta original
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -93,7 +95,6 @@ CORS_ALLOW_HEADERS = [
     "x-requested-with",
 ]
 
-# Impede redirecionamentos automáticos que quebram o CORS do Axios
 APPEND_SLASH = False 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -109,7 +110,11 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'static/dist'),
+    os.path.join(BASE_DIR, 'static/dist/assets'), # Permite carregar o JS/CSS do Vite
+]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
