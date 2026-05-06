@@ -14,5 +14,5 @@ class Veiculo(models.Model):
     horario_entrada = models.DateTimeField(default=timezone.now)
     horario_saida   = models.DateTimeField(null=True, blank=True)
 
-    def __str__(self):
-        return f"{self.modelo} - {self.placa}"
+    def __str__(self):""" 
+        return f"{self.modelo} - {self.placa}" """

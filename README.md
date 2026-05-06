@@ -1,6 +1,6 @@
 # Logo Ali Estacionamentos
 
-Sistema de **gerenciamento inteligente de estacionamentos** desenvolvido como um ecossistema **Full-Stack (Django + React)** para a disciplina de **Engenharia Web**.
+Sistema de **Gerenciamento Inteligente de Estacionamentos** desenvolvido como um ecossistema **Full-Stack (Django + React)** para a disciplina de **Segurança e Auditoria de Sistemas de Informação - SASI**.
 
 O **Logo Ali** oferece controle de pátio em tempo real, auditoria de movimentação, integração com pagamentos via **Stripe** e geração dinâmica de **QR Codes** para liberação de veículos.
 

@@ -1,83 +1,83 @@
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            color: #333;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            font-family: 'Montserrat', sans-serif;
-        }
-        
-        /* Menu Superior Transparente */
-        header {
-            background-color: transparent;
-            padding: 1.2rem 2.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: absolute;
-            width: 100%;
-            z-index: 100;
-        }
-        
-        .logo {
-            font-weight: bold;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
-            font-family: 'Oswald', sans-serif;
-            display: flex;
-            align-items: center;
-        }
-        
-        .logo-icon {
-            height: 40px;
-            width: auto;
-            max-width: 150px;
-        }
-        
-        nav ul {
-            display: flex;
-            list-style: none;
-            align-items: center;
-            gap: 1.5rem;
-        }
-        
-        nav a {
-            text-decoration: none;
-            color: white;
-            font-weight: 500;
-            font-size: 0.9rem;
-            transition: color 0.3s;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
-            font-family: 'Montserrat', sans-serif;
-        }
-        
-        nav a:hover {
-            color: #7ED957;
-        }
-        
-        .view-btn {
-            background-color: #7ED957;
-            color: white;
-            padding: 0.5rem 1.2rem;
-            border-radius: 11px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            transition: all 0.3s;
-            border: none;
-            cursor: pointer;
-            font-family: 'Montserrat', sans-serif;
-        }
-        
-        .view-btn:hover {
-            background-color: #6bc34d;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-        
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    color: #333;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* Menu Superior Transparente */
+header {
+    background-color: transparent;
+    padding: 0.6rem 2.5rem; /* DIMINUÍ para compensar a logo maior */
+    display: flex;
+    justify-content: space-between;
+    align-items: center; /* mantém tudo centralizado verticalmente */
+    position: absolute;
+    width: 100%;
+    z-index: 100;
+}
+
+.logo {
+    font-weight: bold;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+    font-family: 'Oswald', sans-serif;
+    display: flex;
+    align-items: center;
+}
+
+/* LOGO MAIOR MAS ALINHADA */
+.logo-icon {
+    height: 60px;
+    width: auto;
+    max-width: 200px;
+    display: block;
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+nav a {
+    text-decoration: none;
+    color: white;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: color 0.3s;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+    font-family: 'Montserrat', sans-serif;
+}
+
+nav a:hover {
+    color: #7ED957;
+}
+
+.view-btn {
+    background-color: #7ED957;
+    color: white;
+    padding: 0.5rem 1.2rem;
+    border-radius: 11px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s;
+    border: none;
+    cursor: pointer;
+}
+
+.view-btn:hover {
+    background-color: #6bc34d;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
         /* Seção Principal com Imagem de Fundo */
         .main-content {
             flex: 1;
@@ -248,114 +248,120 @@
         }
         
         /* Rodapé Branco Compacto */
-        footer {
-            background-color: white;
-            color: #2c3e50;
-            padding: 3rem 2rem 1.5rem;
-            position: relative;
-            z-index: 5;
-            box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.05);
-        }
+/* Rodapé Branco Compacto */
+footer {
+    background-color: white;
+    color: #2c3e50;
+    padding: 3rem 2rem 1.5rem;
+    position: relative;
+    z-index: 5;
+    box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.footer-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start; /* CORREÇÃO PRINCIPAL */
+    max-width: 1200px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+    gap: 2rem;
+}
+
+.footer-column {
+    flex: 1;
+    min-width: 200px;
+}
+
+/* Coluna da logo organizada */
+.footer-logo {
+    font-weight: bold;
+    margin-bottom: 1rem;
+    color: #2c3e50;
+    font-family: 'Oswald', sans-serif;
+    display: flex;
+    align-items: center;
+}
+
+.footer-logo-icon {
+    height: 50px;
+    width: auto;
+    max-width: 220px;
+    display: block;
+}
+
+.footer-description {
+    margin-bottom: 1.2rem;
+    line-height: 1.5;
+    font-size: 0.85rem;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.footer-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #7ED957;
+    position: relative;
+    padding-bottom: 0.4rem;
+    font-family: 'Oswald', sans-serif;
+}
+
+.footer-title:after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 40px;
+    height: 2px;
+    background-color: #7ED957;
+}
+
+.footer-list {
+    list-style: none;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.85rem;
+}
+
+.footer-list li {
+    margin-bottom: 0.6rem;
+}
+
+.footer-list a {
+    color: #2c3e50;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.footer-list a:hover {
+    color: #7ED957;
+}
+
+.social-icons {
+    display: flex;
+    gap: 0.8rem;
+    margin-top: 0.8rem;
+}
+
+.social-icon {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background-color: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    font-size: 0.9rem;
+}
+
+.social-icon:hover {
+    background-color: #7ED957;
+    color: white;
+    transform: translateY(-3px);
+}
         
-        .footer-container {
-            display: flex;
-            justify-content: space-between;
-            max-width: 1200px;
-            margin: 0 auto;
-            flex-wrap: wrap;
-            gap: 1.5rem;
-        }
-        
-        .footer-column {
-            flex: 1;
-            min-width: 200px;
-        }
-        
-        .footer-logo {
-            font-weight: bold;
-            margin-bottom: 0.8rem;
-            color: #2c3e50;
-            font-family: 'Oswald', sans-serif;
-        }
-        
-        .footer-logo-icon {
-            height: 50px;
-            width: auto;
-            max-width: 200px;
-        }
-        
-        .footer-description {
-            margin-bottom: 1.2rem;
-            line-height: 1.5;
-            font-size: 0.85rem;
-            font-family: 'Montserrat', sans-serif;
-        }
-        
-        .footer-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            color: #7ED957;
-            position: relative;
-            padding-bottom: 0.4rem;
-            font-family: 'Oswald', sans-serif;
-        }
-        
-        .footer-title:after {
-            content: '';
-            position: absolute;
-            left: 0;
-            bottom: 0;
-            width: 40px;
-            height: 2px;
-            background-color: #7ED957;
-        }
-        
-        .footer-list {
-            list-style: none;
-            font-family: 'Montserrat', sans-serif;
-            font-size: 0.85rem;
-        }
-        
-        .footer-list li {
-            margin-bottom: 0.6rem;
-        }
-        
-        .footer-list a {
-            color: #2c3e50;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-        
-        .footer-list a:hover {
-            color: #7ED957;
-        }
-        
-        .social-icons {
-            display: flex;
-            gap: 0.8rem;
-            margin-top: 0.8rem;
-        }
-        
-        .social-icon {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            background-color: #f5f5f5;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
-            font-size: 0.9rem;
-        }
-        
-        .social-icon:hover {
-            background-color: #7ED957;
-            color: white;
-            transform: translateY(-3px);
-        }
-        
-        /* Mensagens de erro/sucesso */
+/* Mensagens de erro/sucesso */
         .messages {
             position: fixed;
             top: 20px;

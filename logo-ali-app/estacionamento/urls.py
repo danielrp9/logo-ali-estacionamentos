@@ -11,15 +11,15 @@ app_name = 'estacionamento'
 
 urlpatterns = [
     # ==========================================
-    # ROTAS DE TEMPLATES (TRADICIONAIS)
+    # ROTAS DE TEMPLATES (TRADICIONAIS) - PREFIXO ADICIONADO PARA EVITAR CONFLITO
     # ==========================================
-    path('', views.adicionar_veiculo, name='adicionar_veiculo'), 
-    path('lista/', views.lista_veiculos, name='lista_veiculos'), 
-    path('pagamento/<int:veiculo_id>/', views.tela_pagamento, name='tela_pagamento'), 
-    path('adicionar/', views.adicionar_veiculo, name='adicionar_veiculo_v2'),
-    path('saida/<int:veiculo_id>/', views.registrar_saida, name='registrar_saida'),
-    path('pagamento-concluido/<int:veiculo_id>/', views.pagamento_concluido, name='pagamento_concluido'),
-    path('historico/', views.historico_veiculos, name='historico'),
+    path('old-v1/', views.adicionar_veiculo, name='adicionar_veiculo'), 
+    path('old-v1/lista/', views.lista_veiculos, name='lista_veiculos'), 
+    path('old-v1/pagamento/<int:veiculo_id>/', views.tela_pagamento, name='tela_pagamento'), 
+    path('old-v1/adicionar/', views.adicionar_veiculo, name='adicionar_veiculo_v2'),
+    path('old-v1/saida/<int:veiculo_id>/', views.registrar_saida, name='registrar_saida'),
+    path('old-v1/pagamento-concluido/<int:veiculo_id>/', views.pagamento_concluido, name='pagamento_concluido'),
+    path('old-v1/historico/', views.historico_veiculos, name='historico'),
 
     # ==========================================
     # ROTAS DE API (PARA O REACT / VITE)
