@@ -193,7 +193,8 @@ class CriarSessaoPagamentoAPI(APIView):
         valor_centavos = int(float(round(horas * 5, 2)) * 100)
 
         try:
-            success_url = "http://localhost:5173/sucesso?session_id={CHECKOUT_SESSION_ID}&veiculo_id=" + str(veiculo.id)
+            # CORREÇÃO: Apontando para a porta 8000 (Django unificado) em vez da 5173
+            success_url = "http://localhost:8000/sucesso?session_id={CHECKOUT_SESSION_ID}&veiculo_id=" + str(veiculo.id)
             
             session = stripe.checkout.Session.create(
                 payment_method_types=['card'],
@@ -207,7 +208,7 @@ class CriarSessaoPagamentoAPI(APIView):
                 }],
                 mode='payment',
                 success_url=success_url,
-                cancel_url="http://localhost:5173/dashboard",
+                cancel_url="http://localhost:8000/dashboard",
             )
             return Response({'url': session.url})
         except Exception as e:

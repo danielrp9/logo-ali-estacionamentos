@@ -1,6 +1,6 @@
 /**
- * Logo Ali Estacionamentos - Login Page (High Visibility Edition)
- * Author: Daniel Rodrigues Pereira | Year: 2026
+ * Logo Ali Estacionamentos - Login Page (Unified Production Edition)
+ * Author: Daniel Rodrigues | Year: 2026
  * Estética: Deep Olive Glass / Kinetic Minimalism
  */
 import React, { useState } from 'react';
@@ -27,15 +27,26 @@ const Login = () => {
     setError('');
     
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/login/', {
+      /**
+       * CORREÇÃO CRÍTICA: 
+       * Removido o 'http://127.0.0.1:8000' para usar caminhos relativos.
+       * Isso evita conflitos de CORS e garante que o token seja persistido 
+       * corretamente no domínio em que o Django está servindo o React.
+       */
+      const response = await axios.post('/api/login/', {
         username,
         password
       });
 
+      // Gravação dos dados de auditoria e acesso
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('username', response.data.username);
       localStorage.setItem('is_staff', response.data.is_staff);
 
+      /**
+       * Usamos window.location.href para garantir que todo o estado da 
+       * aplicação seja reiniciado com o novo Token no cabeçalho do Axios.
+       */
       window.location.href = '/dashboard';
     } catch (err) {
       setError(err.response ? 'Usuário ou senha incorretos.' : 'Erro de conexão com o servidor.');
@@ -44,7 +55,6 @@ const Login = () => {
 
   return (
     <div style={{...styles.container, backgroundImage: `url(${assets.background})`}}>
-      {/* Overlay para garantir contraste independente do background escolhido */}
       <div style={styles.backgroundOverlay}></div>
 
       <div style={{...styles.card, backgroundColor: assets.structureColor, border: `1px solid ${assets.borderColor}`}}>
@@ -54,7 +64,10 @@ const Login = () => {
               src={assets.logo} 
               alt="Logo Ali" 
               style={styles.mainLogo}
-              onError={(e) => { e.target.style.display = 'none'; document.getElementById('loginFallback').style.display = 'flex'; }}
+              onError={(e) => { 
+                e.target.style.display = 'none'; 
+                document.getElementById('loginFallback').style.display = 'flex'; 
+              }}
             />
             <div id="loginFallback" style={{display: 'none', flexDirection: 'column', alignItems: 'center'}}>
               <Car size={32} color="#00b247" />
@@ -168,8 +181,7 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: '8px',
-    transition: 'color 0.2s'
+    gap: '8px'
   },
   errorBox: { display: 'flex', alignItems: 'center', gap: '8px', color: '#ef4444', fontSize: '0.8rem', justifyContent: 'center', marginBottom: '1rem', fontWeight: '700' },
   footer: { marginTop: '1.5rem', textAlign: 'center' },

@@ -1,6 +1,7 @@
 /**
  * Logo Ali Estacionamentos - PagamentoSucesso.jsx (Versão Final de Produção)
  * Author: Daniel Rodrigues Pereira | Year: 2026
+ * Versão: 2.1 - Inclui Trava de Persistência Pós-Redirecionamento
  */
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
@@ -25,9 +26,17 @@ const PagamentoSucesso = () => {
     useEffect(() => {
         const confirmarPagamento = async () => {
             const sessionId = searchParams.get('session_id');
-            // Captura o ID e limpa qualquer caractere não numérico (segurança contra sujeira na URL)
             const rawId = searchParams.get('veiculo_id');
             const veiculoId = rawId ? rawId.match(/\d+/)?.[0] : null;
+            
+            // --- TRAVA DE PERSISTÊNCIA ---
+            // Verifica se o token ainda existe após o redirecionamento externo
+            const token = localStorage.getItem('token');
+            if (!token) {
+                console.error("Sessão perdida no redirecionamento. Retornando ao login.");
+                navigate('/login');
+                return;
+            }
 
             if (sessionId && veiculoId) {
                 try {
@@ -38,6 +47,8 @@ const PagamentoSucesso = () => {
                     setDados(response.data);
                 } catch (err) {
                     console.error("ERRO CRÍTICO NA CONFIRMAÇÃO:", err.response?.data);
+                    // Se o erro for 401, o interceptor do api.js lidará com isso, 
+                    // mas mantemos o loading false para mostrar o erro se necessário.
                 } finally {
                     setLoading(false);
                 }
@@ -46,7 +57,7 @@ const PagamentoSucesso = () => {
             }
         };
         confirmarPagamento();
-    }, [searchParams]);
+    }, [searchParams, navigate]);
 
     const formatarData = (dataStr) => {
         if (!dataStr) return "---";

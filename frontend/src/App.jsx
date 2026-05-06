@@ -1,7 +1,6 @@
 /**
  * Logo Ali Estacionamentos - Main Application Component
- * Author: Daniel Rodrigues Pereira
- * Year: 2026
+ * Author: Daniel Rodrigues | Year: 2026
  */
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
@@ -14,52 +13,45 @@ import AdicionarVeiculo from './pages/AdicionarVeiculo';
 import Historico from './pages/Historico';
 import PagamentoSucesso from './pages/PagamentoSucesso';
 
-
+// Componente de Proteção de Rota mais robusto
 const PrivateRoute = ({ children }) => {
-  const isAuthenticated = localStorage.getItem('token');
-  return isAuthenticated ? children : <Navigate to="/login" />;
+  const token = localStorage.getItem('token');
+  
+  // Se não houver token, redireciona para o login
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
+  
+  return children;
 };
 
 function App() {
   return (
     <Router>
       <Routes>
-        {/* 1. Lading Page: Apresentação da Marca Logo Ali */}
+        {/* Rota Pública */}
         <Route path="/" element={<Home />} />
-
-        {/* 2. Fluxo de Autenticação */}
         <Route path="/login" element={<Login />} />
         <Route path="/cadastro" element={<Cadastro />} />
 
-        {/* 3. Rotas Privadas (Operação Tática e Monitoramento) */}
+        {/* Rotas Protegidas */}
         <Route 
           path="/dashboard" 
-          element={
-            <PrivateRoute>
-              <Dashboard />
-            </PrivateRoute>
-          } 
+          element={<PrivateRoute><Dashboard /></PrivateRoute>} 
         />
 
         <Route 
           path="/adicionar" 
-          element={
-            <PrivateRoute>
-              <AdicionarVeiculo />
-            </PrivateRoute>
-          } 
+          element={<PrivateRoute><AdicionarVeiculo /></PrivateRoute>} 
         />
 
         <Route 
           path="/historico" 
-          element={
-            <PrivateRoute>
-              <Historico />
-            </PrivateRoute>
-          } 
+          element={<PrivateRoute><Historico /></PrivateRoute>} 
         />
 
-        {/* 4. Confirmação de Saída (Sucesso Stripe/Sistema) */}
+        {/* Rota de Sucesso (Onde o redirecionamento do Stripe cai) */}
+        {/* Usamos a PrivateRoute aqui também, mas o segredo está no componente interno carregar o token corretamente */}
         <Route 
           path="/sucesso" 
           element={
@@ -69,8 +61,8 @@ function App() {
           } 
         />
 
-        {/* 5. Fallback Global: Redireciona rotas inexistentes para a Home */}
-        <Route path="*" element={<Navigate to="/" />} />
+        {/* Fallback Global */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
   );
