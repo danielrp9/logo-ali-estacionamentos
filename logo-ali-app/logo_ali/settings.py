@@ -1,25 +1,38 @@
 """
-LogoAli/Logo Ali - Parking Management System
-Author: Daniel Rodrigues Pereira
-Year: 2026
+LogoAli/Logo Ali - Parking Management System (Security Updated)
+Author: Daniel Rodrigues Pereira | Year: 2026
 """
 
 import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-# Carrega variáveis de ambiente do arquivo .env
 load_dotenv()
 
-# Caminho base do projeto
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Configurações de Segurança
 SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-dev-key-change-in-production")
 DEBUG = os.getenv("DEBUG", "True").lower() in ("true", "1", "t")
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
-# Aplicações Instaladas
+# Adicionado localhost para garantir acesso em ambiente offline
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost,0.0.0.0").split(",")
+
+# ==============================================================================
+# CONFIGURAÇÕES DE SEGURANÇA PARA PROXY (NGINX + HTTPS)
+# ==============================================================================
+# Diz ao Django para confiar no cabeçalho enviado pelo Nginx sobre o protocolo (HTTP vs HTTPS)
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# Mantemos como False para os testes offline, permitindo que o cookie de sessão
+# funcione quando você pular do HTTPS (Login) de volta para o HTTP (Dashboard)
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
+
+# Proteção contra ataques comuns, conforme sua PSI 
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+# ==============================================================================
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -27,21 +40,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
-    # API e Segurança
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
-    
-    # Apps do Sistema
     'estacionamento',
 ]
 
-# Middlewares
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware', 
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware', # Essencial para servir o build em produção
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -52,13 +60,12 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'logo_ali.urls'
 
-# Configuração de Templates para enxergar o index.html do React
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            os.path.join(BASE_DIR, 'static/dist'), # Onde o index.html do React reside após o build
-            os.path.join(BASE_DIR, 'templates'),    # Suas views tradicionais
+            os.path.join(BASE_DIR, 'static/dist'),
+            os.path.join(BASE_DIR, 'templates'),
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -73,7 +80,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'logo_ali.wsgi.application'
 
-# Banco de Dados
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -81,7 +87,6 @@ DATABASES = {
     }
 }
 
-# Django REST Framework
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
@@ -92,52 +97,34 @@ REST_FRAMEWORK = {
     ],
 }
 
-# Configurações de CORS
 CORS_ALLOW_ALL_ORIGINS = True 
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_HEADERS = [
-    "accept",
-    "authorization",
-    "content-type",
-    "user-agent",
-    "x-csrftoken",
-    "x-requested-with",
-]
 
-# Impede o Django de forçar barras no final das URLs (importante para compatibilidade com o Router do React)
 APPEND_SLASH = False 
 
-# Validação de Senhas
+# Conforme norma N02.1 da sua PSI
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator', 'OPTIONS': {'min_length': 8}},
     {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-# Internacionalização
 LANGUAGE_CODE = 'pt-br'
 TIME_ZONE = 'America/Sao_Paulo'
 USE_I18N = True
 USE_TZ = True
 
-# Arquivos Estáticos (Configuração de Build Unificado)
 STATIC_URL = 'static/'
-
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'), # Pasta de estáticos raiz
-    os.path.join(BASE_DIR, 'static/dist'), # Pasta de build do Vite
+    os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'static/dist'),
 ]
-
-# Pasta onde o comando 'collectstatic' reunirá tudo para produção
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-# WhiteNoise para compressão e cache eficiente
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Stripe Integration Keys
 STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY')
 STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
 STRIPE_WEBHOOK_SECRET = os.getenv('STRIPE_WEBHOOK_SECRET')
