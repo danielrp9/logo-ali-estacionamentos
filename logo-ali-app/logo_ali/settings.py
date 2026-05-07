@@ -1,8 +1,3 @@
-"""
-LogoAli/Logo Ali - Parking Management System (Security Updated)
-Author: Daniel Rodrigues Pereira | Year: 2026
-"""
-
 import os
 from pathlib import Path
 from dotenv import load_dotenv
@@ -20,15 +15,16 @@ ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost,0.0.0.0").split(
 # ==============================================================================
 # CONFIGURAÇÕES DE SEGURANÇA PARA PROXY (NGINX + HTTPS)
 # ==============================================================================
-# Diz ao Django para confiar no cabeçalho enviado pelo Nginx sobre o protocolo (HTTP vs HTTPS)
+# 1. Reconhecimento de Protocolo: Impede Loops e Erros 502
+# Essencial para que o request.is_secure() funcione corretamente atrás do Nginx.
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-# Mantemos como False para os testes offline, permitindo que o cookie de sessão
-# funcione quando você pular do HTTPS (Login) de volta para o HTTP (Dashboard)
+# 2. Travas de Cookies (Conforme Norma N08.6 da PSI)
+# Mantidos como False para permitir transição entre 80 e 443 sem deslogar o usuário.
 SESSION_COOKIE_SECURE = False
 CSRF_COOKIE_SECURE = False
 
-# Proteção contra ataques comuns, conforme sua PSI 
+# 3. Proteções de Navegador contra XSS e Content Sniffing
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 # ==============================================================================
@@ -43,10 +39,11 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
-    'estacionamento',
+    'estacionamento', 
 ]
 
 MIDDLEWARE = [
+    'estacionamento.middleware.ProtocolEnforcerMiddleware', 
     'corsheaders.middleware.CorsMiddleware', 
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -99,10 +96,9 @@ REST_FRAMEWORK = {
 
 CORS_ALLOW_ALL_ORIGINS = True 
 CORS_ALLOW_CREDENTIALS = True
-
 APPEND_SLASH = False 
 
-# Conforme norma N02.1 da sua PSI
+# Conforme norma N02.1 da sua PSI (Gestão de Senhas)
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator', 'OPTIONS': {'min_length': 8}},
@@ -125,6 +121,7 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Integração com Gateway de Pagamento (Conforme mapeamento HTTPS)
 STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY')
 STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
 STRIPE_WEBHOOK_SECRET = os.getenv('STRIPE_WEBHOOK_SECRET')

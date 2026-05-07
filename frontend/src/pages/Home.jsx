@@ -32,6 +32,10 @@ const Home = () => {
     }
   };
 
+  // Funções de navegação forçada para acionar o Middleware de Segurança
+  const goToLogin = () => window.location.href = '/login/';
+  const goToCadastro = () => window.location.href = '/cadastro/';
+
   return (
     <div style={styles.container}>
       <ResponsiveStyle isMenuOpen={isMenuOpen} assets={assets} />
@@ -39,7 +43,7 @@ const Home = () => {
       {/* NAVBAR FLUTUANTE */}
       <div style={styles.navWrapper}>
         <nav style={{...styles.navbar, backgroundColor: assets.structureColor, border: `1px solid ${assets.borderColor}`}}>
-          <div style={styles.logoGroup} onClick={() => navigate('/')}>
+          <div style={styles.logoGroup} onClick={() => window.location.href = '/'}>
             <img 
               src={assets.logo} 
               alt="Logo Ali" 
@@ -54,10 +58,10 @@ const Home = () => {
 
           <div className="desktopNav" style={styles.navLinks}>
             <span style={styles.navLinkItem} onClick={scrollToAbout}>Sobre</span>
-            <button style={styles.btnNavText} onClick={() => navigate('/login')}>
+            <button style={styles.btnNavText} onClick={goToLogin}>
                <LogIn size={16} /> Entrar
             </button>
-            <button style={styles.btnNavAction} onClick={() => navigate('/cadastro')}>
+            <button style={styles.btnNavAction} onClick={goToCadastro}>
                <UserPlus size={16} /> Cadastrar-se
             </button>
           </div>
@@ -71,8 +75,8 @@ const Home = () => {
         {isMenuOpen && (
           <div className="mobileMenuDropdown" style={{...styles.mobileMenuDropdown, backgroundColor: assets.structureColor}}>
             <span style={styles.navLinkItem} onClick={scrollToAbout}>Sobre</span>
-            <button style={styles.btnNavText} onClick={() => navigate('/login')}>Entrar</button>
-            <button style={{...styles.btnNavAction, width: '100%', justifyContent: 'center'}} onClick={() => navigate('/cadastro')}>Cadastrar-se</button>
+            <button style={styles.btnNavText} onClick={goToLogin}>Entrar</button>
+            <button style={{...styles.btnNavAction, width: '100%', justifyContent: 'center'}} onClick={goToCadastro}>Cadastrar-se</button>
           </div>
         )}
       </div>
@@ -105,7 +109,7 @@ const Home = () => {
               de alta precisão para monitoramento ininterrupto.
             </p>
             <div style={styles.buttonGroup} className="buttonGroup">
-              <button style={styles.btnPrimary} onClick={() => navigate('/login')}>
+              <button style={styles.btnPrimary} onClick={goToLogin}>
                 ESTACIONE AGORA <ArrowRight size={18} />
               </button>
               <div style={styles.divider} className="heroDivider"></div>
@@ -158,7 +162,7 @@ const Home = () => {
               <div style={styles.gaugeValue}>4550</div>
               <div style={styles.gaugeSub}>VAGAS MONITORADAS</div>
             </div>
-            <button style={styles.cardBtn} onClick={() => navigate('/login')}>Saiba mais</button>
+            <button style={styles.cardBtn} onClick={goToLogin}>Saiba mais</button>
           </div>
 
           <div style={{...styles.cardSmall, backgroundColor: assets.structureColor, border: `1px solid ${assets.borderColor}`}}>
@@ -187,7 +191,7 @@ const Home = () => {
       <footer style={styles.footer} className="footer">
         <div style={styles.footerGrid} className="footerGrid">
           <div>
-            <div style={{...styles.logoGroup, marginBottom: '15px'}} className="footerLogo">
+            <div style={{...styles.logoGroup, marginBottom: '15px'}} className="footerLogo" onClick={() => window.location.href = '/'}>
                <Car size={24} color="#00b247" />
                <span style={{...styles.logoText, color: '#fff'}}>LOGO ALI</span>
             </div>
@@ -195,7 +199,7 @@ const Home = () => {
           </div>
           <div style={styles.footerLinks}>
             <span style={styles.footerLinkTitle}>Serviços</span>
-            <p>Registro de veículos</p>
+            <p onClick={goToLogin} style={{cursor: 'pointer'}}>Registro de veículos</p>
             <p>Controle de vagas</p>
           </div>
           <div style={styles.footerLinks}>

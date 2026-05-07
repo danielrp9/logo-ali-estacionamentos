@@ -4,12 +4,10 @@
  * Estética: Deep Olive Glass / Kinetic Minimalism
  */
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { UserPlus, Car, ShieldCheck, ArrowLeft, Mail, Lock, User } from 'lucide-react';
 
 const Cadastro = () => {
-  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -18,7 +16,6 @@ const Cadastro = () => {
   });
   const [error, setError] = useState('');
 
-  // --- CONFIGURAÇÕES DE ATIVOS ---
   const assets = {
     logo: "/logo.png",
     background: "/background/background1.jpg",
@@ -40,14 +37,14 @@ const Cadastro = () => {
     }
 
     try {
-      // Endpoint sugerido para criação de conta
-      await axios.post('http://127.0.0.1:8000/api/register/', {
+      // Uso de caminho relativo para integração correta com o Nginx
+      await axios.post('/api/register/', {
         username: formData.username,
         email: formData.email,
         password: formData.password
       });
 
-      // Redireciona para o login após sucesso
+      // Redirecionamento nativo para acionar o Middleware de segurança
       window.location.href = '/login';
     } catch (err) {
       setError(err.response?.data?.erro || 'Erro ao criar conta. Tente outro usuário.');
@@ -60,7 +57,7 @@ const Cadastro = () => {
 
       <div style={{...styles.card, backgroundColor: assets.structureColor, border: `1px solid ${assets.borderColor}`}}>
         <div style={styles.header}>
-          <div style={styles.logoWrapper} onClick={() => navigate('/')}>
+          <div style={styles.logoWrapper} onClick={() => window.location.href = '/'}>
             <img 
               src={assets.logo} 
               alt="Logo Ali" 
@@ -152,7 +149,7 @@ const Cadastro = () => {
             <UserPlus size={18} />
           </button>
 
-          <button type="button" onClick={() => navigate('/login')} style={styles.btnLink}>
+          <button type="button" onClick={() => window.location.href = '/login'} style={styles.btnLink}>
             <ArrowLeft size={14} /> Já tenho uma conta
           </button>
         </form>
