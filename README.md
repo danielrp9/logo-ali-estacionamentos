@@ -2,24 +2,25 @@
 
 Sistema de **Gerenciamento Inteligente de Estacionamentos** desenvolvido como um ecossistema **Full-Stack (Django + React)** para a disciplina de **Segurança e Auditoria de Sistemas de Informação - SASI**.
 
-O **Logo Ali** oferece controle de pátio em tempo real, auditoria de movimentação, integração com pagamentos via **Stripe** e geração dinâmica de **QR Codes** para liberação de veículos.
+O **Logo Ali** oferece controle de pátio em tempo real, auditoria de movimentação, integração com pagamentos via **Stripe** e segurança de tráfego baseada em **SSL Dual-Protocol**.
 
 ---
 
 # Estrutura do Projeto
 
-O sistema foi arquitetado de forma unificada. O **Django** atua como API REST e também como servidor dos arquivos estáticos do **React**, permitindo que todo o sistema seja acessado através de uma única porta.
+O sistema utiliza uma arquitetura híbrida onde o **Nginx** atua como Proxy Reverso para gerenciamento de criptografia, enquanto o **Django** processa a lógica de negócios e serve o build do **React**.
 
 ```
 logo-ali-project/
 │
 ├── logo-ali-app/        # Servidor Backend (Django) + Static Files
-│   ├── estacionamento/  # App do Sistema (Models, API Views, Serializers)
-│   ├── logo_ali/        # Configurações do Core Django
+│   ├── estacionamento/  # App (Middleware de Portaria, Models, API)
+│   ├── logo_ali/        # Configurações Core
 │   └── static/dist/     # Build do Frontend (Interface React)
 │
 ├── frontend/            # Código-fonte da interface (React + Vite)
-└── README.md            # Documentação de Auditoria
+├── certs/               # Certificados SSL (Desenvolvimento)
+└── README.md            # Documentação de Auditoria e Setup
 ```
 
 ---
@@ -28,6 +29,7 @@ logo-ali-project/
 
 * **Python 3.10+**
 * **Node.js 18+** e **npm**
+* **Nginx** (Essencial para a infraestrutura de segurança)
 * **Git**
 
 ---
@@ -48,7 +50,27 @@ source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### 3. Configuração do Stripe 
+### 3. Configuração de Segurança SSL (Norma N08.6 PSI)
+Para que a funcionalidade de HTTPS e o redirecionamento automático operem corretamente, é vital a padronização dos certificados.
+
+**Nota de Padronização:** O arquiteto do sistema deve compartilhar os arquivos de certificados (`server.crt` e `server.key`) para que todos os membros utilizem as mesmas credenciais SSL em modo de desenvolvimento.
+
+**A. Preparar Diretório de Certificados:**
+```bash
+sudo mkdir -p /etc/nginx/logoali-certs/
+# Copie os arquivos compartilhados pelo arquiteto para a pasta universal
+sudo cp ../certs/server.crt /etc/nginx/logoali-certs/
+sudo cp ../certs/server.key /etc/nginx/logoali-certs/
+```
+
+**B. Configurar Nginx:**
+```bash
+sudo cp ../logoali.conf /etc/nginx/sites-available/
+sudo ln -s /etc/nginx/sites-available/logoali.conf /etc/nginx/sites-enabled/
+sudo nginx -t && sudo systemctl restart nginx
+```
+
+### 4. Configuração do Stripe 
 Como o sistema utiliza o Stripe para o fluxo de checkout, é necessário gerar uma chave de teste:
 
 1.  Acesse o [Dashboard do Stripe](https://dashboard.stripe.com/register) e crie uma conta (gratuita).
@@ -56,7 +78,7 @@ Como o sistema utiliza o Stripe para o fluxo de checkout, é necessário gerar u
 3.  Vá em **Developers > API Keys**.
 4.  Copie a **Publishable key** (começa com `pk_test_`) e a **Secret key** (começa com `sk_test_`).
 
-### 4. Configuração do Arquivo `.env`
+### 5. Configuração do Arquivo `.env`
 Crie um arquivo `.env` dentro da pasta `logo-ali-app/` e preencha com as chaves obtidas no passo anterior:
 ```env
 SECRET_KEY=sua_chave_secreta_django_qualquer
@@ -66,41 +88,38 @@ STRIPE_PUBLIC_KEY=pk_test_COLE_AQUI_SUA_CHAVE_PUBLICA
 STRIPE_SECRET_KEY=sk_test_COLE_AQUI_SUA_CHAVE_PRIVADA
 ```
 
-### 5. Banco de Dados e Acesso Administrativo
+### 6. Banco de Dados e Build
 ```bash
 python manage.py migrate
 python manage.py createsuperuser  
-```
 
-### 6. Compilação do Frontend (React)
-```bash
 cd ../frontend
-npm install
-npm run build
+npm install && npm run build
 ```
 
 ---
 
 # Execução do Sistema
 
-Com o ambiente virtual ativado e na pasta `logo-ali-app`, inicie o servidor:
+Com o ambiente virtual ativado na pasta `logo-ali-app`, inicie o servidor:
 ```bash
 python manage.py runserver
 ```
 
-**Acesse o sistema unificado em:**
-[http://127.0.0.1:8000](http://127.0.0.1:8000)
+**Acesso via Proxy Seguro (Nginx):**
+* **Navegação Comum:** [http://localhost](http://localhost) (Porta 80)
+* **Navegação Sensível:** O sistema redirecionará automaticamente para [https://localhost](https://localhost) (Porta 443) ao acessar rotas de Login ou Cadastro.
 
-> **Nota para Testes de Pagamento:** Ao realizar um checkout, utilize os números de [cartões de teste oficiais do Stripe](https://docs.stripe.com/testing) (Ex: Cartão `4242 4242 4242 4242`, qualquer validade futura e CVC `123`).
+> **Nota para Testes de Pagamento:** Utilize os números de [cartões de teste oficiais do Stripe](https://docs.stripe.com/testing) (Ex: `4242 4242 4242 4242`).
 
 ---
 
-# Funcionalidades para Análise
+# Funcionalidades para Análise de Auditoria
 
-* **Pátio em Tempo Real**: Monitoramento dinâmico de veículos ativos.
-* **Checkout Stripe**: Integração completa com gateway de pagamento (Modo Teste).
-* **Geração de QR Code**: Tokens dinâmicos para liberação e conferência de saída.
-* **Dashboard Operacional**: Interface otimizada para desktop e dispositivos móveis.
+* **ProtocolEnforcerMiddleware**: "Portaria" de segurança que gerencia a transição HTTP/HTTPS no nível da aplicação.
+* **Dual-Block Nginx**: Separação física de portas para tráfego público e tráfego encriptado.
+* **HSTS & Hard Redirects**: Garantia de que o navegador mantenha a integridade do protocolo seguro.
+* **QR Code Dinâmico**: Geração de tokens de acesso vinculados à confirmação de pagamento via Stripe.
 
 ---
 
