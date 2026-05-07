@@ -15,7 +15,6 @@ class ProtocolEnforcerMiddleware:
         path = request.path
         clean_path = path.strip('/')
         
-        # Lista de rotas que EXIGEM criptografia (Norma N08.6 da PSI)
         secure_routes = ['login', 'cadastro', 'admin', 'veiculo', 'pagamento']
         
         needs_https = clean_path in secure_routes
@@ -23,14 +22,11 @@ class ProtocolEnforcerMiddleware:
 
         print(f"PORTARIA -> Path: {path} | HTTPS: {is_https} | Needs: {needs_https}")
 
-        # REGRA 1: Forçar HTTPS em rotas sensíveis
         if needs_https and not is_https:
             response = redirect(f"https://localhost{path}")
             
-            # BLOQUEIO DE CACHE: Obriga o navegador a reprocessar a requisição do zero
             add_never_cache_headers(response)
             
-            # CABEÇALHO DE UPGRADE: Força a transição de protocolo no motor do browser
             response['Vary'] = 'Upgrade-Insecure-Requests'
             return response
 
