@@ -13,12 +13,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  /**
-   * MECANISMO DE AUTO-SYNC (Protocol Check):
-   * Se o componente carregar em HTTP (vinda de um link interno do React),
-   * forçamos o redirecionamento imediato para HTTPS para validar o certificado.
-   * ✅ IMPORTANTE: O replace força o reload, disparando o Nginx/Middleware.
-   */
+
   useEffect(() => {
     const isLocalhostDev = window.location.port === '3000' || window.location.port === '5173';
 
@@ -35,24 +30,16 @@ const Login = () => {
     borderColor: "rgba(255, 255, 255, 0.08)",
   };
 
-  /**
-   * ✅ FIX #5b: TRUQUE DO "HARD REDIRECT" DINÂMICO
-   * Força o navegador a sair do modo SPA (Single Page Application) e bater no servidor.
-   * Isso é o que elimina a necessidade do professor dar "F5".
-   */
+
   const handleHardRedirect = (targetPath) => {
     const { hostname, port } = window.location;
     // Se estivermos no Nginx (porta 80/443), port virá vazio.
     const portSuffix = port ? `:${port}` : '';
 
     if (targetPath === '/') {
-      // ✅ GATILHO DE RETORNO: Força a volta ao HTTP explicitamente
-      // Isso, combinado com a regra 'max-age=0' do Nginx, limpa o cadeado na hora.
       const httpUrl = `http://${hostname}${portSuffix}/`;
       window.location.assign(httpUrl);
     } else {
-      // ✅ GATILHO DE ENTRADA: Força o navegador a recarregar a rota no servidor
-      // O Middleware de Portaria no Django cuidará da elevação para HTTPS (302).
       const secureUrl = `${window.location.protocol}//${hostname}${portSuffix}${targetPath}`;
       window.location.assign(secureUrl);
     }
@@ -73,7 +60,6 @@ const Login = () => {
       localStorage.setItem('username', response.data.username);
       localStorage.setItem('is_staff', response.data.is_staff);
 
-      // Redirecionamento forçado para garantir que o Dashboard carregue em HTTPS
       handleHardRedirect('/dashboard/');
     } catch (err) {
       setError(err.response ? 'Usuário ou senha incorretos.' : 'Erro de conexão com o servidor.');

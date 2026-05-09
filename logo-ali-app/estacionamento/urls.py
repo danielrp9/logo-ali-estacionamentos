@@ -11,7 +11,7 @@ app_name = 'estacionamento'
 
 urlpatterns = [
     # ==========================================
-    # ROTAS DE TEMPLATES (TRADICIONAIS) - PREFIXO ADICIONADO PARA EVITAR CONFLITO
+    # ROTAS DE TEMPLATES (TRADICIONAIS)
     # ==========================================
     path('old-v1/', views.adicionar_veiculo, name='adicionar_veiculo'), 
     path('old-v1/lista/', views.lista_veiculos, name='lista_veiculos'), 
@@ -24,7 +24,6 @@ urlpatterns = [
     # ==========================================
     # ROTAS DE API (PARA O REACT / VITE)
     # ==========================================
-    # Autenticação
     path('api/login/', views.LoginUsuarioAPI.as_view(), name='api_login'),
     
     # Gestão de Veículos

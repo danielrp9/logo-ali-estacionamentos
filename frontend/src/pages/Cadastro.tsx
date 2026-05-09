@@ -44,7 +44,6 @@ const Cadastro = () => {
         password: formData.password
       });
 
-      // Redirecionamento nativo para acionar o Middleware de segurança
       window.location.href = '/login';
     } catch (err) {
       setError(err.response?.data?.erro || 'Erro ao criar conta. Tente outro usuário.');

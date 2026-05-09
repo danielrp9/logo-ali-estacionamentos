@@ -47,8 +47,6 @@ const PagamentoSucesso = () => {
                     setDados(response.data);
                 } catch (err) {
                     console.error("ERRO CRÍTICO NA CONFIRMAÇÃO:", err.response?.data);
-                    // Se o erro for 401, o interceptor do api.js lidará com isso, 
-                    // mas mantemos o loading false para mostrar o erro se necessário.
                 } finally {
                     setLoading(false);
                 }

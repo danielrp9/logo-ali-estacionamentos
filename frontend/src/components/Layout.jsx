@@ -30,9 +30,9 @@ const Layout = ({ children }) => {
   };
 
   const menuItems = [
-    { label: 'Pátio Atual', icon: <LayoutDashboard size={20} />, path: '/dashboard' },
-    { label: 'Novo Veículo', icon: <PlusCircle size={20} />, path: '/adicionar' },
-    { label: 'Histórico', icon: <History size={20} />, path: '/historico' },
+    { label: 'Pátio Atual', icon: <LayoutDashboard size={20} />, path: '/dashboard/' },
+    { label: 'Novo Veículo', icon: <PlusCircle size={20} />, path: '/adicionar/' },
+    { label: 'Histórico', icon: <History size={20} />, path: '/historico/' },
   ];
 
   return (

@@ -17,9 +17,9 @@ const Dashboard = () => {
 
   // --- CONFIGURAÇÕES DE TEMA ---
   const theme = {
-    structure: "#21261f", // Marrom esverdeado perceptível
+    structure: "#21261f", 
     background: "#111310",
-    border: "rgba(255, 255, 255, 0.08)", // Visibilidade em ambientes claros
+    border: "rgba(255, 255, 255, 0.08)", 
     accent: "#00b247"
   };
 

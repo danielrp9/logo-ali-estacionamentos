@@ -34,21 +34,15 @@ function App() {
     <Router>
       <Routes>
         {/* ZONA PÚBLICA (HTTP POR PADRÃO)
-            ✅ FIX #5a: Rotas sempre com barra final "/" para evitar conflitos 
-            com o redirecionamento do Middleware do Django.
         */}
         <Route path="/" element={<Home />} />
         
         {/* ZONA SENSÍVEL (GATILHOS PARA HTTPS)
-            O redirecionamento de protocolo é feito via Middleware no Backend
-            ou via Hard Redirect no componente Login.jsx.
         */}
         <Route path="/login/" element={<Login />} />
         <Route path="/cadastro/" element={<Cadastro />} />
 
         {/* ZONA PRIVADA (ÁREAS LOGADAS)
-            Todas as rotas abaixo são protegidas pelo PrivateRoute e devem
-            ser acessadas sob o protocolo HTTPS para garantir a segurança.
         */}
         <Route 
           path="/dashboard/" 
@@ -66,7 +60,6 @@ function App() {
         />
 
         {/* ZONA DE TRANSAÇÃO (STRIPE)
-            Garante que o retorno do gateway de pagamento seja processado em ambiente seguro.
         */}
         <Route 
           path="/sucesso/" 

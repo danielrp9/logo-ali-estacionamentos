@@ -22,9 +22,6 @@ from .serializers import VeiculoSerializer
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
-# ==========================================
-# VIEWS TRADICIONAIS (TEMPLATES)
-# ==========================================
 
 @login_required
 def adicionar_veiculo(request):
@@ -122,7 +119,7 @@ def pagamento_concluido(request, veiculo_id):
 
 
 # ==========================================
-# NOVAS VIEWS PARA A API (REACT)
+# VIEWS PARA A API (REACT)
 # ==========================================
 
 class LoginUsuarioAPI(ObtainAuthToken):

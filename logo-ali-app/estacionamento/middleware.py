@@ -27,7 +27,6 @@ class ProtocolEnforcerMiddleware:
             target_url = request.build_absolute_uri(path).replace('http://', 'https://')
             response = HttpResponseRedirect(target_url)
             
-            # Travas Anti-Cache (Removido 'Connection' para evitar AssertionError)
             response['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
             response['Pragma'] = 'no-cache'
             response['Expires'] = '0'
@@ -39,13 +38,11 @@ class ProtocolEnforcerMiddleware:
             target_url = request.build_absolute_uri('/').replace('https://', 'http://')
             response = HttpResponseRedirect(target_url)
             
-            # Limpeza de HSTS no nível de aplicação
             response['Strict-Transport-Security'] = 'max-age=0'
             response['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
             response['Vary'] = 'X-Forwarded-Proto, Accept-Encoding'
             return response
         
-        # RESPOSTA PADRÃO
         response = self.get_response(request)
         response['Vary'] = 'X-Forwarded-Proto, Accept-Encoding'
         
