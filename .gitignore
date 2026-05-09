@@ -21,3 +21,6 @@ Thumbs.db
 
 # --- certificados SSL ---
 certs/
+
+#--- arquivos de temporarios ---
+temporario/

@@ -2,25 +2,28 @@
  * Logo Ali Estacionamentos - Login Page (Unified Production Edition)
  * Author: Daniel Rodrigues | Year: 2026
  * Estética: Deep Olive Glass / Kinetic Minimalism
+ * Finalidade: Garantir sincronia de protocolo SSL via Hard Redirects (FIX #5b).
  */
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { LogIn, Car, ShieldCheck, UserPlus } from 'lucide-react';
 
 const Login = () => {
-  const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  // --- AUTO-REFRESH DE SEGURANÇA (HARD SYNC) ---
+  /**
+   * MECANISMO DE AUTO-SYNC (Protocol Check):
+   * Se o componente carregar em HTTP (vinda de um link interno do React),
+   * forçamos o redirecionamento imediato para HTTPS para validar o certificado.
+   * ✅ IMPORTANTE: O replace força o reload, disparando o Nginx/Middleware.
+   */
   useEffect(() => {
-    /**
-     * Se o componente montar em HTTP, forçamos o redirecionamento via JS.
-     * Isso automatiza o 'F5' que o navegador às vezes exige no localhost.
-     */
-    if (window.location.protocol === 'http:' && !window.location.host.includes('8000')) {
+    const isLocalhostDev = window.location.port === '3000' || window.location.port === '5173';
+
+    if (window.location.protocol === 'http:' && !isLocalhostDev) {
+      // Força a troca para HTTPS preservando o host e o path atual para validar SSL
       window.location.replace(window.location.href.replace("http://", "https://"));
     }
   }, []);
@@ -33,12 +36,26 @@ const Login = () => {
   };
 
   /**
-   * TRUQUE DO "HARD REDIRECT":
-   * Força o navegador a carregar a rota como uma nova requisição ao servidor.
-   * Isso é vital para que o Middleware de Portaria valide a troca de protocolo.
+   * ✅ FIX #5b: TRUQUE DO "HARD REDIRECT" DINÂMICO
+   * Força o navegador a sair do modo SPA (Single Page Application) e bater no servidor.
+   * Isso é o que elimina a necessidade do professor dar "F5".
    */
-  const handleHardRedirect = (url) => {
-    window.location.assign(url);
+  const handleHardRedirect = (targetPath) => {
+    const { hostname, port } = window.location;
+    // Se estivermos no Nginx (porta 80/443), port virá vazio.
+    const portSuffix = port ? `:${port}` : '';
+
+    if (targetPath === '/') {
+      // ✅ GATILHO DE RETORNO: Força a volta ao HTTP explicitamente
+      // Isso, combinado com a regra 'max-age=0' do Nginx, limpa o cadeado na hora.
+      const httpUrl = `http://${hostname}${portSuffix}/`;
+      window.location.assign(httpUrl);
+    } else {
+      // ✅ GATILHO DE ENTRADA: Força o navegador a recarregar a rota no servidor
+      // O Middleware de Portaria no Django cuidará da elevação para HTTPS (302).
+      const secureUrl = `${window.location.protocol}//${hostname}${portSuffix}${targetPath}`;
+      window.location.assign(secureUrl);
+    }
   };
 
   const handleLogin = async (e) => {
@@ -51,11 +68,12 @@ const Login = () => {
         password
       });
 
+      // Armazenamento local da sessão (Persistência interna)
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('username', response.data.username);
       localStorage.setItem('is_staff', response.data.is_staff);
 
-      // Redirecionamento após login bem-sucedido
+      // Redirecionamento forçado para garantir que o Dashboard carregue em HTTPS
       handleHardRedirect('/dashboard/');
     } catch (err) {
       setError(err.response ? 'Usuário ou senha incorretos.' : 'Erro de conexão com o servidor.');
@@ -68,8 +86,11 @@ const Login = () => {
 
       <div style={{...styles.card, backgroundColor: assets.structureColor, border: `1px solid ${assets.borderColor}`}}>
         <div style={styles.header}>
-          {/* Volta para Home forçando o protocolo HTTP */}
-          <div style={styles.logoWrapper} onClick={() => handleHardRedirect('/')} style={{cursor: 'pointer'}}>
+          {/* Logo atua como gatilho de retorno para a Home (HTTP Pura) */}
+          <div
+            style={{ ...styles.logoWrapper, cursor: 'pointer' }}
+            onClick={() => handleHardRedirect('/')}
+          >
             <img 
               src={assets.logo} 
               alt="Logo Ali" 

@@ -1,6 +1,7 @@
 /**
  * Logo Ali Estacionamentos - Main Application Component
  * Author: Daniel Rodrigues | Year: 2026
+ * Finalidade: Gerenciamento de rotas com sincronia de protocolo (FIX #5a).
  */
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
@@ -13,13 +14,16 @@ import AdicionarVeiculo from './pages/AdicionarVeiculo';
 import Historico from './pages/Historico';
 import PagamentoSucesso from './pages/PagamentoSucesso';
 
-// Componente de Proteção de Rota mais robusto
+/**
+ * Componente de Proteção de Rota (Guard)
+ * Garante que apenas usuários autenticados acessem áreas administrativas.
+ */
 const PrivateRoute = ({ children }) => {
   const token = localStorage.getItem('token');
   
-  // Se não houver token, redireciona para o login
   if (!token) {
-    return <Navigate to="/login" replace />;
+    // Redireciona para o login caso não haja sessão ativa
+    return <Navigate to="/login/" replace />;
   }
   
   return children;
@@ -29,31 +33,43 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Rota Pública */}
+        {/* ZONA PÚBLICA (HTTP POR PADRÃO)
+            ✅ FIX #5a: Rotas sempre com barra final "/" para evitar conflitos 
+            com o redirecionamento do Middleware do Django.
+        */}
         <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/cadastro" element={<Cadastro />} />
+        
+        {/* ZONA SENSÍVEL (GATILHOS PARA HTTPS)
+            O redirecionamento de protocolo é feito via Middleware no Backend
+            ou via Hard Redirect no componente Login.jsx.
+        */}
+        <Route path="/login/" element={<Login />} />
+        <Route path="/cadastro/" element={<Cadastro />} />
 
-        {/* Rotas Protegidas */}
+        {/* ZONA PRIVADA (ÁREAS LOGADAS)
+            Todas as rotas abaixo são protegidas pelo PrivateRoute e devem
+            ser acessadas sob o protocolo HTTPS para garantir a segurança.
+        */}
         <Route 
-          path="/dashboard" 
+          path="/dashboard/" 
           element={<PrivateRoute><Dashboard /></PrivateRoute>} 
         />
 
         <Route 
-          path="/adicionar" 
+          path="/adicionar/" 
           element={<PrivateRoute><AdicionarVeiculo /></PrivateRoute>} 
         />
 
         <Route 
-          path="/historico" 
+          path="/historico/" 
           element={<PrivateRoute><Historico /></PrivateRoute>} 
         />
 
-        {/* Rota de Sucesso (Onde o redirecionamento do Stripe cai) */}
-        {/* Usamos a PrivateRoute aqui também, mas o segredo está no componente interno carregar o token corretamente */}
+        {/* ZONA DE TRANSAÇÃO (STRIPE)
+            Garante que o retorno do gateway de pagamento seja processado em ambiente seguro.
+        */}
         <Route 
-          path="/sucesso" 
+          path="/sucesso/" 
           element={
             <PrivateRoute>
               <PagamentoSucesso />
@@ -61,7 +77,7 @@ function App() {
           } 
         />
 
-        {/* Fallback Global */}
+        {/* Fallback Global: Redireciona qualquer rota inexistente para a Home Social */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>

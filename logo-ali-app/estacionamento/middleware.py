@@ -3,9 +3,7 @@ LogoAli/Logo Ali - Parking Management System (Security Protocol Enforcer)
 Author: Daniel Rodrigues Pereira | Year: 2026
 Finalidade: Gerenciamento granular de SSL (HTTP/HTTPS) conforme Norma N08.6 da PSI.
 """
-
-from django.shortcuts import redirect
-from django.utils.cache import add_never_cache_headers
+from django.http import HttpResponseRedirect
 
 class ProtocolEnforcerMiddleware:
     def __init__(self, get_response):
@@ -15,26 +13,43 @@ class ProtocolEnforcerMiddleware:
         path = request.path
         clean_path = path.strip('/')
         
-        secure_routes = ['login', 'cadastro', 'admin', 'veiculo', 'pagamento']
+        secure_routes = ['login', 'cadastro', 'admin', 'veiculo', 'pagamento', 'dashboard', 'historico', 'adicionar']
         
-        needs_https = clean_path in secure_routes
+        needs_https = any(clean_path.startswith(route) for route in secure_routes)
         is_https = request.is_secure()
+        
+        # Log de Auditoria para Terminal
+        forwarded_proto = request.META.get('HTTP_X_FORWARDED_PROTO', 'undefined')
+        print(f"PORTARIA -> Path: {path} | HTTPS: {is_https} | X-Forwarded-Proto: {forwarded_proto} | Needs HTTPS: {needs_https}")
 
-        print(f"PORTARIA -> Path: {path} | HTTPS: {is_https} | Needs: {needs_https}")
-
+        # REGRA 1: FORÇAR SALTO PARA HTTPS
         if needs_https and not is_https:
-            response = redirect(f"https://localhost{path}")
+            target_url = request.build_absolute_uri(path).replace('http://', 'https://')
+            response = HttpResponseRedirect(target_url)
             
-            add_never_cache_headers(response)
-            
-            response['Vary'] = 'Upgrade-Insecure-Requests'
+            # Travas Anti-Cache (Removido 'Connection' para evitar AssertionError)
+            response['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+            response['Pragma'] = 'no-cache'
+            response['Expires'] = '0'
+            response['Vary'] = 'X-Forwarded-Proto, Accept-Encoding'
             return response
 
-        # REGRA 2: Forçar volta ao HTTP na Home (Desafio de Desempenho do Sistema)
-        if clean_path == "" and is_https:
-            response = redirect(f"http://localhost/")
-            add_never_cache_headers(response)
-            response['Vary'] = 'Upgrade-Insecure-Requests'
+        # REGRA 2: FORÇAR VOLTA AO HTTP (HOME)
+        if (clean_path == "" or clean_path == "home") and is_https:
+            target_url = request.build_absolute_uri('/').replace('https://', 'http://')
+            response = HttpResponseRedirect(target_url)
+            
+            # Limpeza de HSTS no nível de aplicação
+            response['Strict-Transport-Security'] = 'max-age=0'
+            response['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+            response['Vary'] = 'X-Forwarded-Proto, Accept-Encoding'
             return response
-
-        return self.get_response(request)
+        
+        # RESPOSTA PADRÃO
+        response = self.get_response(request)
+        response['Vary'] = 'X-Forwarded-Proto, Accept-Encoding'
+        
+        if not is_https:
+            response['Strict-Transport-Security'] = 'max-age=0'
+            
+        return response
