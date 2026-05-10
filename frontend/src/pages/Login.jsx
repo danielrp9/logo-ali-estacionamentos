@@ -154,7 +154,7 @@ const Login = () => {
            <span style={styles.footerText}>SASI </span>
         </div>
       </div>
-    </div>
+    </div> 
   );
 };
 

@@ -153,7 +153,7 @@ const Cadastro = () => {
                 <input 
                   name="confirmPassword"
                   type="password" 
-                  placeholder="Repita a senha"
+                  placeholder="Repita a senha" 
                   onChange={handleChange}
                   style={styles.input}
                   required
