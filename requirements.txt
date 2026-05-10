@@ -7,6 +7,7 @@ colorama==0.4.6
 dj-database-url==2.3.0
 dj-stripe==2.9.1
 Django==5.1.2
+django-axes==8.3.1
 django-cors-headers==4.9.0
 django-environ==0.11.2
 django-grappelli==4.0.1
