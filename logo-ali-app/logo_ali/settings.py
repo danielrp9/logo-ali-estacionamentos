@@ -12,7 +12,7 @@ DEBUG = os.getenv("DEBUG", "True").lower() in ("true", "1", "t")
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost,0.0.0.0").split(",")
 
 # ==============================================================================
-# CONFIGURAÇÕES DE SEGURANÇA PARA PROXY (NGINX + HTTPS)
+# CONFIGURAÇÕES DE SEGURANÇA PARA PROXY (NGINX + HTTPS) 
 # ==============================================================================
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')

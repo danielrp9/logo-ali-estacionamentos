@@ -12,4 +12,4 @@ class ComplexityValidator:
             raise ValidationError("A senha deve conter pelo menos um número.")
 
     def get_help_text(self):
-        return "Sua senha deve conter letras maiúsculas, minúsculas e números."
+        return "Sua senha deve conter letras maiúsculas, minúsculas e números." 
