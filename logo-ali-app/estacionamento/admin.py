@@ -9,6 +9,7 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib.admin.models import LogEntry, ADDITION, CHANGE, DELETION
 from django.utils.html import format_html
 from django.forms.models import model_to_dict
+from django.contrib.contenttypes.models import ContentType
 from .models import Usuario, Veiculo
 
 @admin.register(LogEntry)
@@ -55,20 +56,19 @@ class AuditAdminMixin:
             changes = []
             for field, old_value in old_data.items():
                 new_value = new_data.get(field)
+                # Verifica se o valor mudou e se está nos dados modificados do formulário
                 if new_value != old_value and field in form.changed_data:
                     changes.append(f"[{field}]: '{old_value}' → '{new_value}'")
             
             if changes:
                 change_msg = "VALORES: " + " | ".join(changes)
-                from django.contrib.admin.options import construct_change_message
-                change_message = construct_change_message(form, None, False)
-                if isinstance(change_message, list):
-                    change_message[0]['changed']['name'] = change_msg
                 
-              
+                # Obtém o ContentType de forma estável para o Django 5.1
+                ct = ContentType.objects.get_for_model(obj)
+                
                 LogEntry.objects.log_action(
                     user_id=request.user.pk,
-                    content_type_id=admin.utils.get_content_type_for_model(obj).pk,
+                    content_type_id=ct.pk,
                     object_id=obj.pk,
                     object_repr=str(obj),
                     action_flag=CHANGE,
@@ -94,3 +94,5 @@ class VeiculoAdmin(AuditAdminMixin, admin.ModelAdmin):
     readonly_fields = ('horario_entrada', 'criado_por')
 
 admin.site.site_header = "Logo Ali - Terminal de Auditoria SASI"
+admin.site.site_title = "Logo Ali Admin"
+admin.site.index_title = "Gerenciamento de Estacionamento"
