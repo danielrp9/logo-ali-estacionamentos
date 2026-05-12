@@ -208,13 +208,17 @@ class CriarSessaoPagamentoAPI(APIView):
         horas = max(1, tempo.total_seconds() / 3600)
         valor_centavos = int(float(round(horas * 5, 2)) * 100)
         try:
-            success_url = "http://localhost:8000/sucesso?session_id={CHECKOUT_SESSION_ID}&veiculo_id=" + str(veiculo.id)
+
+            # Ajuste removendo o :8000 de http://localhost:8000 e adicionando uma "/" entre o
+            # sucesso?session_id ficando, sucesso/?session_id
+            # Trocando para https tambem para persistir com ssl
+            success_url = "https://localhost/sucesso/?session_id={CHECKOUT_SESSION_ID}&veiculo_id=" + str(veiculo.id)
             session = stripe.checkout.Session.create(
                 payment_method_types=['card'],
                 line_items=[{'price_data': {'currency': 'brl', 'product_data': {'name': f'Saída - Placa {veiculo.placa}'}, 'unit_amount': valor_centavos}, 'quantity': 1}],
                 mode='payment',
                 success_url=success_url,
-                cancel_url="http://localhost:8000/dashboard",
+                cancel_url="https://localhost/dashboard/",
             )
             return Response({'url': session.url})
         except Exception as e:
