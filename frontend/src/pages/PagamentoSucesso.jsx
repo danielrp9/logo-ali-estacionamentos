@@ -29,8 +29,6 @@ const PagamentoSucesso = () => {
             const rawId = searchParams.get('veiculo_id');
             const veiculoId = rawId ? rawId.match(/\d+/)?.[0] : null;
             
-            // --- TRAVA DE PERSISTÊNCIA ---
-            // Verifica se o token ainda existe após o redirecionamento externo
             const token = localStorage.getItem('token');
             if (!token) {
                 console.error("Sessão perdida no redirecionamento. Retornando ao login.");
@@ -40,7 +38,6 @@ const PagamentoSucesso = () => {
 
             if (sessionId && veiculoId) {
                 try {
-                    // Chamada direta para a rota da API configurada no Django
                     const response = await api.post(`/pagamento/confirmar/${veiculoId}/`, {
                         session_id: sessionId
                     });

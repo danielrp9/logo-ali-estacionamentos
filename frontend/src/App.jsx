@@ -13,16 +13,12 @@ import Dashboard from './pages/Dashboard';
 import AdicionarVeiculo from './pages/AdicionarVeiculo';
 import Historico from './pages/Historico';
 import PagamentoSucesso from './pages/PagamentoSucesso';
+import Clientes from './pages/Clientes'; // Importação da nova tela de auditoria
 
-/**
- * Componente de Proteção de Rota (Guard)
- * Garante que apenas usuários autenticados acessem áreas administrativas.
- */
 const PrivateRoute = ({ children }) => {
   const token = localStorage.getItem('token');
   
   if (!token) {
-    // Redireciona para o login caso não haja sessão ativa
     return <Navigate to="/login/" replace />;
   }
   
@@ -33,17 +29,14 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* ZONA PÚBLICA (HTTP POR PADRÃO)
-        */}
+        {/* ZONA PÚBLICA (HTTP POR PADRÃO) */}
         <Route path="/" element={<Home />} />
         
-        {/* ZONA SENSÍVEL (GATILHOS PARA HTTPS)
-        */}
+        {/* ZONA SENSÍVEL (GATILHOS PARA HTTPS) */}
         <Route path="/login/" element={<Login />} />
         <Route path="/cadastro/" element={<Cadastro />} />
 
-        {/* ZONA PRIVADA (ÁREAS LOGADAS)
-        */}
+        {/* ZONA PRIVADA (ÁREAS LOGADAS) */}
         <Route 
           path="/dashboard/" 
           element={<PrivateRoute><Dashboard /></PrivateRoute>} 
@@ -59,8 +52,13 @@ function App() {
           element={<PrivateRoute><Historico /></PrivateRoute>} 
         />
 
-        {/* ZONA DE TRANSAÇÃO (STRIPE)
-        */}
+        {/* ZONA DE AUDITORIA (EXCLUSIVA FUNCIONÁRIOS/ADMIN) */}
+        <Route 
+          path="/clientes/" 
+          element={<PrivateRoute><Clientes /></PrivateRoute>} 
+        />
+
+        {/* ZONA DE TRANSAÇÃO (STRIPE) */}
         <Route 
           path="/sucesso/" 
           element={

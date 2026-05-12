@@ -22,7 +22,6 @@ const Historico = () => {
     useEffect(() => {
         const fetchHistorico = async () => {
             try {
-                // CORREÇÃO: Chamada para o endpoint específico de histórico completo
                 const response = await api.get('/veiculos/historico/'); 
                 setHistorico(response.data);
             } catch (err) {
@@ -42,7 +41,7 @@ const Historico = () => {
             <div style={styles.header}>
                 <div>
                     <h2 style={styles.title}>Auditoria de Movimentação</h2>
-                    <p style={styles.subtitle}>Registro de fluxo em Diamantina • MG</p>
+                    <p style={styles.subtitle}>Registro de fluxo</p>
                 </div>
                 
                 <div style={{...styles.searchBar, backgroundColor: theme.structure, border: `1px solid ${theme.border}`}}>
@@ -62,8 +61,8 @@ const Historico = () => {
                         <tr style={{...styles.thRow, backgroundColor: 'rgba(0,0,0,0.2)'}}>
                             <th style={styles.th}>VEÍCULO</th>
                             <th style={styles.th}>ENTRADA / SAÍDA</th>
-                            <th style={styles.th}>RESPONSÁVEL (AUDITORIA)</th>
-                            <th style={styles.th}>STATUS FINAL</th>
+                            <th style={styles.th}>RESPONSÁVEL</th>
+                            <th style={styles.th}>STATUS</th>
                         </tr>
                     </thead>
                     <tbody>

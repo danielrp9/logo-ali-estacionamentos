@@ -13,12 +13,11 @@ class ProtocolEnforcerMiddleware:
         path = request.path
         clean_path = path.strip('/')
         
-        secure_routes = ['login', 'cadastro', 'admin', 'veiculo', 'pagamento', 'dashboard', 'historico', 'adicionar']
+        secure_routes = ['login', 'cadastro', 'admin', 'clientes', 'veiculo', 'pagamento', 'dashboard', 'historico', 'adicionar']
         
         needs_https = any(clean_path.startswith(route) for route in secure_routes)
         is_https = request.is_secure()
         
-        # Log de Auditoria para Terminal
         forwarded_proto = request.META.get('HTTP_X_FORWARDED_PROTO', 'undefined')
         print(f"PORTARIA -> Path: {path} | HTTPS: {is_https} | X-Forwarded-Proto: {forwarded_proto} | Needs HTTPS: {needs_https}")
 
@@ -50,3 +49,4 @@ class ProtocolEnforcerMiddleware:
             response['Strict-Transport-Security'] = 'max-age=0'
             
         return response
+    

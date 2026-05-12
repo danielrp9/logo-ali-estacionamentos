@@ -1,11 +1,5 @@
-// frontend/src/api.js
 import axios from 'axios';
 
-/**
- * Ao usar caminhos relativos ('/api'), o navegador automaticamente
- * usará o mesmo protocolo (http ou https) e a mesma porta que está
- * servindo a página atual. Isso é essencial para o modo dual do Nginx.
- */
 const api = axios.create({
   baseURL: '/api', 
 });
@@ -13,7 +7,6 @@ const api = axios.create({
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
-    // Adição de cabeçalho para conformidade com TokenAuthentication do Django
     config.headers.Authorization = `Token ${token}`;
   }
   return config;
@@ -22,13 +15,11 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    // SÓ redireciona se for 401 (Não Autorizado) e se não for a página de sucesso
     if (error.response && error.response.status === 401) {
         const isSuccessPage = window.location.pathname.includes('/sucesso');
         
         if (!isSuccessPage) {
-            localStorage.removeItem('token');
-            // Redirecionamento forçado para a página de Login
+            localStorage.removeItem('token')
             window.location.href = '/login';
         }
     }
