@@ -1,15 +1,22 @@
 /**
- * Logo Ali Estacionamentos - Sign Up Page (Security & Architecture Compliant)
+ * Logo Ali Estacionamentos - Sign Up Page (Future-Core v4.5 - Layout Correction)
  * Author: Daniel Rodrigues Pereira | Year: 2026
+ * Finalidade: Registro de Operadores e Clientes (Architecture Compliant)
  */
-import React, { useState } from 'react';
+import React, { useState, ChangeEvent, FormEvent } from 'react';
 import axios from 'axios';
 import { 
   UserPlus, Car, ShieldCheck, ArrowLeft, Mail, 
-  Lock, User, AlertCircle, Phone, MapPin, Hash 
+  Lock, User, AlertCircle, Phone, Hash, Sparkles 
 } from 'lucide-react';
 
-const Cadastro = () => {
+interface ApiError {
+  detail?: string;
+  cpf?: string;
+  username?: string;
+}
+
+const Cadastro: React.FC = () => {
   const [formData, setFormData] = useState({
     cpf: '',
     username: '',
@@ -24,20 +31,19 @@ const Cadastro = () => {
     confirmPassword: ''
   });
   
-  const [error, setError] = useState<any>(null);
+  const [error, setError] = useState<ApiError | null>(null);
 
   const assets = {
-    logo: "/logo.png",
-    background: "/background/background1.jpg",
-    structureColor: "#21261f", 
+    accent: "#00f061", 
+    structureColor: "rgba(255, 255, 255, 0.02)", 
     borderColor: "rgba(255, 255, 255, 0.08)",
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleCadastro = async (e: React.FormEvent) => {
+  const handleCadastro = async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
 
@@ -67,148 +73,233 @@ const Cadastro = () => {
   };
 
   return (
-    <div style={{...styles.container, backgroundImage: `url(${assets.background})`}}>
-      <div style={styles.backgroundOverlay}></div>
+    <div style={styles.container} className="main-viewport">
+      <CadastroStyle assets={assets} />
+      
+      <div className="liquid-orb orb-1"></div>
+      <div className="liquid-orb orb-2"></div>
+      <div className="backgroundGrid"></div>
 
-      <div style={{...styles.card, backgroundColor: assets.structureColor, border: `1px solid ${assets.borderColor}`}}>
-        <div style={styles.header}>
-          <div style={styles.logoWrapper} onClick={() => window.location.href = '/'}>
-            <Car size={32} color="#00b247" />
-            <h2 style={styles.titleFallback}>Logo Ali</h2>
+      {/* Wrapper para garantir a centralização real sem vazamentos */}
+      <main style={styles.centerWrapper}>
+        <div style={styles.card} className="glassCard">
+          <div style={styles.header}>
+            <div style={styles.logoWrapper} onClick={() => window.location.href = '/'}>
+              <div className="logoIcon"><Car size={28} color={assets.accent} /></div>
+              <h2 style={styles.titleFallback}>LOGO ALI <span style={{fontWeight: 300, opacity: 0.4}}>| Estacionamentos</span></h2>
+            </div>
+            <div style={styles.badge}>
+              <ShieldCheck size={12} color={assets.accent} />
+              <span>SOLICITAR REGISTRO DE ACESSO</span>
+            </div>
           </div>
-          <p style={styles.subtitle}>Cadastro</p>
-          <div style={styles.securityBadge}>
-            <ShieldCheck size={12} color="#00b247" />
-            <span>Segurança Ativa</span>
-          </div>
+          
+          <form onSubmit={handleCadastro} style={styles.form}>
+            <div className="form-row">
+              <div className="input-field">
+                <label style={styles.label}>CPF (NUMÉRICOS)</label>
+                <div style={styles.inputWrapper}>
+                  <Hash size={14} className="inputIcon" />
+                  <input name="cpf" maxLength={11} placeholder="00000000000" onChange={handleChange} style={styles.input} required />
+                </div>
+              </div>
+              <div className="input-field">
+                <label style={styles.label}>ID DE USUÁRIO</label>
+                <div style={styles.inputWrapper}>
+                  <User size={14} className="inputIcon" />
+                  <input name="username" placeholder="ex: daniel_ufvjm" onChange={handleChange} style={styles.input} required />
+                </div>
+              </div>
+            </div>
+
+            <div className="input-field full-width">
+              <label style={styles.label}>NOME COMPLETO DO OPERADOR</label>
+              <div style={styles.inputWrapper}>
+                <User size={14} className="inputIcon" />
+                <input name="nome_completo" placeholder="Nome para identificação no sistema" onChange={handleChange} style={styles.input} required />
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="input-field">
+                <label style={styles.label}>E-MAIL INSTITUCIONAL</label>
+                <div style={styles.inputWrapper}>
+                  <Mail size={14} className="inputIcon" />
+                  <input name="email" type="email" placeholder="usuario@dominio.com" onChange={handleChange} style={styles.input} required />
+                </div>
+              </div>
+              <div className="input-field">
+                <label style={styles.label}>CONTATO TELEFÔNICO</label>
+                <div style={styles.inputWrapper}>
+                  <Phone size={14} className="inputIcon" />
+                  <input name="telefone" placeholder="(38) 9..." onChange={handleChange} style={styles.input} required />
+                </div>
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="input-field" style={{ flex: 3 }}>
+                <label style={styles.label}>LOGRADOURO (RUA / AV)</label>
+                <input name="rua" placeholder="Nome da rua" onChange={handleChange} style={styles.inputSimple} required />
+              </div>
+              <div className="input-field" style={{ flex: 1 }}>
+                <label style={styles.label}>Nº</label>
+                <input name="numero" placeholder="123" onChange={handleChange} style={styles.inputSimple} required />
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="input-field">
+                <label style={styles.label}>BAIRRO</label>
+                <input name="bairro" placeholder="Nome do bairro" onChange={handleChange} style={styles.inputSimple} required />
+              </div>
+              <div className="input-field">
+                <label style={styles.label}>CIDADE BASE</label>
+                <input name="cidade" value={formData.cidade} style={styles.inputSimple} readOnly />
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="input-field">
+                <label style={styles.label}>SENHA DE SEGURANÇA</label>
+                <div style={styles.inputWrapper}>
+                  <Lock size={14} className="inputIcon" />
+                  <input name="password" type="password" placeholder="Mín. 8 dígitos" onChange={handleChange} style={styles.input} required />
+                </div>
+              </div>
+              <div className="input-field">
+                <label style={styles.label}>CONFIRMAÇÃO</label>
+                <div style={styles.inputWrapper}>
+                  <Lock size={14} className="inputIcon" />
+                  <input name="confirmPassword" type="password" placeholder="Repita a senha" onChange={handleChange} style={styles.input} required />
+                </div>
+              </div>
+            </div>
+
+            {error && (
+              <div style={styles.errorBox} className="shakeEffect">
+                 <AlertCircle size={14} />
+                 <span>{error.detail || error.cpf || error.username || "Falha na validação."}</span>
+              </div>
+            )}
+
+            <button type="submit" className="btn-glow" style={styles.button}>
+              <span>EFETUAR CADASTRO</span>
+              <UserPlus size={18} />
+            </button>
+
+            <button type="button" onClick={() => window.location.href = '/login'} style={styles.btnLink} className="linkHover">
+              <ArrowLeft size={14} /> JÁ TENHO CONTA
+            </button>
+          </form>
         </div>
-        
-        <form onSubmit={handleCadastro} style={styles.form}>
-          {/* IDENTIFICAÇÃO BÁSICA */}
-          <div style={styles.inputRow}>
-            <div style={styles.inputGroup}>
-              <label style={styles.label}>CPF (Apenas números)</label>
-              <div style={styles.inputWrapper}>
-                <Hash size={16} style={styles.icon} />
-                <input name="cpf" maxLength={11} placeholder="000.000.000-00" onChange={handleChange} style={styles.input} required />
-              </div>
-            </div>
-            <div style={styles.inputGroup}>
-              <label style={styles.label}>Usuário (Login)</label>
-              <div style={styles.inputWrapper}>
-                <User size={16} style={styles.icon} />
-                <input name="username" placeholder="ex: daniel_ufvjm" onChange={handleChange} style={styles.input} required />
-              </div>
-            </div>
+
+        <footer style={styles.footer}>
+          <div className="footerBadge">
+              <Sparkles size={10} color={assets.accent} />
+              <span>SISTEMA ATIVO: DIAMANTINA v2.6</span>
           </div>
-
-          <div style={styles.inputGroup}>
-            <label style={styles.label}>Nome Completo</label>
-            <div style={styles.inputWrapper}>
-              <User size={16} style={styles.icon} />
-              <input name="nome_completo" placeholder="Seu nome completo" onChange={handleChange} style={styles.input} required />
-            </div>
-          </div>
-
-          <div style={styles.inputRow}>
-            <div style={styles.inputGroup}>
-              <label style={styles.label}>E-mail</label>
-              <div style={styles.inputWrapper}>
-                <Mail size={16} style={styles.icon} />
-                <input name="email" type="email" placeholder="email@dominio.com" onChange={handleChange} style={styles.input} required />
-              </div>
-            </div>
-            <div style={styles.inputGroup}>
-              <label style={styles.label}>Telefone</label>
-              <div style={styles.inputWrapper}>
-                <Phone size={16} style={styles.icon} />
-                <input name="telefone" placeholder="(38) 9..." onChange={handleChange} style={styles.input} required />
-              </div>
-            </div>
-          </div>
-
-          {/* ENDEREÇO SEPARADO (EXIGÊNCIA ARQUITETURAL) */}
-          <div style={styles.inputRow}>
-            <div style={styles.inputGroup} style={{flex: 2}}>
-              <label style={styles.label}>Rua</label>
-              <input name="rua" placeholder="Rua / Av" onChange={handleChange} style={styles.inputSimple} required />
-            </div>
-            <div style={styles.inputGroup} style={{flex: 1}}>
-              <label style={styles.label}>Nº</label>
-              <input name="numero" placeholder="123" onChange={handleChange} style={styles.inputSimple} required />
-            </div>
-          </div>
-
-          <div style={styles.inputRow}>
-            <div style={styles.inputGroup}>
-              <label style={styles.label}>Bairro</label>
-              <input name="bairro" placeholder="Bairro" onChange={handleChange} style={styles.inputSimple} required />
-            </div>
-            <div style={styles.inputGroup}>
-              <label style={styles.label}>Cidade</label>
-              <input name="cidade" value={formData.cidade} onChange={handleChange} style={styles.inputSimple} required />
-            </div>
-          </div>
-
-          {/* SENHAS */}
-          <div style={styles.inputRow}>
-            <div style={styles.inputGroup}>
-              <label style={styles.label}>Senha</label>
-              <div style={styles.inputWrapper}>
-                <Lock size={16} style={styles.icon} />
-                <input name="password" type="password" placeholder="Min. 8 char" onChange={handleChange} style={styles.input} required />
-              </div>
-            </div>
-            <div style={styles.inputGroup}>
-              <label style={styles.label}>Confirmação</label>
-              <div style={styles.inputWrapper}>
-                <Lock size={16} style={styles.icon} />
-                <input name="confirmPassword" type="password" placeholder="Repita" onChange={handleChange} style={styles.input} required />
-              </div>
-            </div>
-          </div>
-
-          {error && (
-            <div style={styles.errorBox}>
-               <AlertCircle size={14} color="#ef4444" />
-               <span>{error.detail || error.cpf || error.username || "Verifique os dados."}</span>
-            </div>
-          )}
-
-          <button type="submit" style={styles.button}>
-            <span>EFETUAR CADASTRO</span>
-            <UserPlus size={18} />
-          </button>
-
-          <button type="button" onClick={() => window.location.href = '/login'} style={styles.btnLink}>
-            <ArrowLeft size={14} /> JÁ TENHO CONTA
-          </button>
-        </form>
-      </div>
+        </footer>
+      </main>
     </div>
   );
 };
 
-const styles: any = {
-  container: { display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', width: '100vw', position: 'relative', backgroundSize: 'cover', backgroundPosition: 'center', padding: '40px 0' },
-  backgroundOverlay: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(17, 19, 16, 0.95)', zIndex: 1 },
-  card: { position: 'relative', zIndex: 2, backdropFilter: 'blur(25px)', padding: '2rem', borderRadius: '30px', boxShadow: '0 40px 100px rgba(0,0,0,0.7)', width: '95%', maxWidth: '550px' },
-  header: { textAlign: 'center', marginBottom: '1.5rem' },
-  logoWrapper: { display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '8px', cursor: 'pointer' },
-  titleFallback: { fontSize: '1.2rem', fontWeight: '900', color: '#fff', margin: '5px 0 0', textTransform: 'uppercase' },
-  subtitle: { fontSize: '0.65rem', color: '#8d948a', fontWeight: '800', letterSpacing: '1px', textTransform: 'uppercase' },
-  securityBadge: { display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px', marginTop: '10px', fontSize: '0.55rem', color: '#00b247', fontWeight: '900' },
-  form: { display: 'flex', flexDirection: 'column', gap: '1rem' },
-  inputRow: { display: 'flex', gap: '12px' },
-  inputGroup: { flex: 1, display: 'flex', flexDirection: 'column', gap: '0.4rem' },
-  label: { fontSize: '0.55rem', fontWeight: '900', color: '#8d948a', textTransform: 'uppercase' },
-  inputWrapper: { position: 'relative', display: 'flex', alignItems: 'center' },
-  icon: { position: 'absolute', left: '12px', color: '#00b247', opacity: 0.7 },
-  input: { width: '100%', padding: '0.7rem 0.7rem 0.7rem 2.2rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)', fontSize: '0.8rem', outline: 'none', backgroundColor: 'rgba(0,0,0,0.4)', color: '#fff' },
-  inputSimple: { width: '100%', padding: '0.7rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)', fontSize: '0.8rem', outline: 'none', backgroundColor: 'rgba(0,0,0,0.4)', color: '#fff' },
-  button: { width: '100%', padding: '1rem', backgroundColor: '#00b247', color: '#fff', border: 'none', borderRadius: '14px', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px', fontWeight: '900', fontSize: '0.85rem', boxShadow: '0 10px 30px rgba(0, 178, 71, 0.2)', marginTop: '0.5rem' },
-  btnLink: { background: 'none', border: 'none', color: '#4a5248', fontSize: '0.65rem', fontWeight: '800', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', textTransform: 'uppercase' },
-  errorBox: { display: 'flex', alignItems: 'center', gap: '8px', color: '#ef4444', fontSize: '0.65rem', justifyContent: 'center', fontWeight: '800', backgroundColor: 'rgba(239, 68, 68, 0.05)', padding: '8px', borderRadius: '10px', border: '1px solid rgba(239, 68, 68, 0.2)' },
+const styles: { [key: string]: React.CSSProperties } = {
+  container: { 
+    display: 'flex', 
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    minHeight: '100vh', 
+    width: '100vw', 
+    position: 'relative', 
+    backgroundColor: '#020502', 
+    overflowX: 'hidden',
+    margin: 0,
+    padding: 0
+  },
+  centerWrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    zIndex: 2,
+    padding: '40px 20px'
+  },
+  card: { 
+    position: 'relative', 
+    padding: '2.5rem', 
+    borderRadius: '40px', 
+    width: '100%', 
+    maxWidth: '600px', 
+    textAlign: 'center' 
+  },
+  header: { marginBottom: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center' },
+  logoWrapper: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px', cursor: 'pointer', marginBottom: '15px' },
+  titleFallback: { fontSize: '1rem', fontWeight: '900', color: '#fff', margin: 0, letterSpacing: '1px' },
+  badge: { display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(0,240,97,0.1)', padding: '6px 14px', borderRadius: '100px', fontSize: '0.6rem', fontWeight: '800', color: '#00f061', border: '1px solid rgba(0,240,97,0.2)' },
+  form: { display: 'flex', flexDirection: 'column', gap: '1.2rem' },
+  label: { fontSize: '0.6rem', fontWeight: '900', color: 'rgba(255,255,255,0.4)', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '6px', display: 'block' },
+  inputWrapper: { position: 'relative', display: 'flex', alignItems: 'center', width: '100%' },
+  input: { width: '100%', padding: '0.9rem 1rem 0.9rem 2.8rem', borderRadius: '15px', border: '1px solid rgba(255,255,255,0.05)', fontSize: '0.85rem', outline: 'none', backgroundColor: 'rgba(0,0,0,0.3)', color: '#fff' },
+  inputSimple: { width: '100%', padding: '0.9rem', borderRadius: '15px', border: '1px solid rgba(255,255,255,0.05)', fontSize: '0.85rem', outline: 'none', backgroundColor: 'rgba(0,0,0,0.3)', color: '#fff' },
+  button: { width: '100%', padding: '1.1rem', backgroundColor: '#00f061', color: '#000', border: 'none', borderRadius: '18px', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '12px', fontWeight: '900', fontSize: '0.9rem', marginTop: '1rem' },
+  btnLink: { background: 'none', border: 'none', color: 'rgba(255,255,255,0.3)', fontSize: '0.65rem', fontWeight: '800', marginTop: '1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', textTransform: 'uppercase' },
+  errorBox: { display: 'flex', alignItems: 'center', gap: '10px', color: '#ff4d4d', fontSize: '0.75rem', justifyContent: 'center', fontWeight: '700', padding: '12px', backgroundColor: 'rgba(255, 77, 77, 0.05)', borderRadius: '12px', border: '1px solid rgba(255, 77, 77, 0.2)' },
+  footer: { marginTop: '30px', position: 'relative' }
 };
+
+const CadastroStyle = ({ assets }: { assets: any }) => (
+  <style>{`
+    * { box-sizing: border-box; }
+    body, html { margin: 0; padding: 0; }
+    
+    .glassCard {
+        background: rgba(255, 255, 255, 0.02);
+        backdrop-filter: blur(40px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .logoIcon {
+        background: linear-gradient(135deg, rgba(0,240,97,0.2), transparent);
+        padding: 10px;
+        border-radius: 50%;
+        border: 1px solid rgba(0,240,97,0.2);
+    }
+
+    .inputIcon { position: absolute; left: 16px; color: ${assets.accent}; opacity: 0.6; }
+
+    .liquid-orb { position: fixed; border-radius: 50%; filter: blur(120px); z-index: 1; pointer-events: none; opacity: 0.1; }
+    .orb-1 { width: 600px; height: 600px; background: ${assets.accent}; top: -200px; right: -150px; }
+    .orb-2 { width: 500px; height: 500px; background: #0080ff; bottom: -100px; left: -150px; opacity: 0.08; }
+
+    .backgroundGrid {
+        position: absolute; inset: 0; 
+        background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+        background-size: 50px 50px; z-index: 1;
+        mask-image: radial-gradient(circle at 50% 50%, black, transparent 90%);
+    }
+
+    .form-row { display: flex; gap: 15px; width: 100%; }
+    .input-field { flex: 1; display: flex; flex-direction: column; text-align: left; }
+
+    input:focus { border-color: ${assets.accent}44 !important; background-color: rgba(0,0,0,0.5) !important; }
+
+    .btn-glow:hover {
+        background-color: #fff !important;
+        box-shadow: 0 0 30px ${assets.accent}66;
+        transform: translateY(-2px);
+    }
+
+    .linkHover:hover { color: #fff !important; letter-spacing: 0.5px; transition: 0.3s; }
+
+    .footerBadge { display: flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.2); font-size: 0.6rem; font-weight: 800; letter-spacing: 1px; }
+
+    @media (max-width: 600px) {
+        .form-row { flex-direction: column; gap: 1.2rem; }
+    }
+  `}</style>
+);
 
 export default Cadastro;

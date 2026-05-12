@@ -1,69 +1,69 @@
 /**
- * Logo Ali Estacionamentos - Visual Tech-X Edition (Final Production)
+ * Logo Ali Estacionamentos - Future-Core v4.3 (Mobile Fix Absolute)
  * Author: Daniel Rodrigues Pereira | Year: 2026
- * Estética: Kinetic Minimalism / Deep Olive Structure
+ * Estética: Kinetic Glass / Deep Grid / Grounded Composition
  */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-  Car, ShieldCheck, ArrowRight, Menu, X, 
-  Cpu, Clock, Gauge, Activity, Battery, LogIn, UserPlus
+  Car, ArrowRight, Menu, X, 
+  LogIn, Lock, Eye, FileText, Zap, Sparkles
 } from 'lucide-react';
 
 const Home = () => {
-  const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
-  // --- CONFIGURAÇÕES DE ATIVOS ---
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const assets = {
-    logo: "/logo.png",
-    heroVehicle: "https://images.unsplash.com/photo-1506521781263-d8422e82f27a?auto=format&fit=crop&q=80&w=1200",
-    structureColor: "#21261f", 
-    borderColor: "rgba(255, 255, 255, 0.08)",
+    heroVehicle: "https://www.pngmart.com/files/4/Tesla-PNG-Image.png", 
+    accent: "#00f061", 
   };
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
-  const scrollToAbout = () => {
-    const section = document.getElementById('sobre');
+  const scrollToSection = (id) => {
+    const section = document.getElementById(id);
     if (section) {
       section.scrollIntoView({ behavior: 'smooth' });
-      if (isMenuOpen) setIsMenuOpen(false);
+      setIsMenuOpen(false);
     }
   };
 
-  // Funções de navegação forçada para acionar o Middleware de Segurança
   const goToLogin = () => window.location.href = '/login/';
   const goToCadastro = () => window.location.href = '/cadastro/';
 
   return (
     <div style={styles.container}>
-      <ResponsiveStyle isMenuOpen={isMenuOpen} assets={assets} />
+      <ResponsiveStyle assets={assets} isMenuOpen={isMenuOpen} />
+      
+      {/* BACKGROUND ELEMENTS */}
+      <div className="liquid-orb orb-1"></div>
+      <div className="liquid-orb orb-2"></div>
 
-      {/* NAVBAR FLUTUANTE */}
-      <div style={styles.navWrapper}>
-        <nav style={{...styles.navbar, backgroundColor: assets.structureColor, border: `1px solid ${assets.borderColor}`}}>
+      {/* NAVBAR */}
+      <header style={{...styles.navWrapper, top: scrolled ? '10px' : '20px'}}>
+        <nav style={{
+          ...styles.navbar, 
+          backgroundColor: scrolled ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.02)',
+          width: scrolled ? '90%' : '95%'
+        }}>
           <div style={styles.logoGroup} onClick={() => window.location.href = '/'}>
-            <img 
-              src={assets.logo} 
-              alt="Logo Ali" 
-              style={styles.brandLogo}
-              onError={(e) => { e.target.style.display = 'none'; document.getElementById('logoFallback').style.display = 'flex'; }}
-            />
-            <div id="logoFallback" style={{display: 'none', alignItems: 'center', gap: '8px'}}>
-              <Car size={24} color="#00b247" />
-              <span style={styles.logoText}>LOGO ALI</span>
-            </div>
+            <div style={styles.logoIcon}><Car size={18} color={assets.accent} /></div>
+            <span style={styles.logoText}>LOGO ALI <span style={{fontWeight: 300, opacity: 0.4}}>| Estacionamentos</span></span>
           </div>
 
           <div className="desktopNav" style={styles.navLinks}>
-            <span style={styles.navLinkItem} onClick={scrollToAbout}>Sobre</span>
-            <button style={styles.btnNavText} onClick={goToLogin}>
-               <LogIn size={16} /> Entrar
-            </button>
-            <button style={styles.btnNavAction} onClick={goToCadastro}>
-               <UserPlus size={16} /> Cadastrar-se
-            </button>
+            <span style={styles.navLinkItem} onClick={() => scrollToSection('sobre')}>Essência</span>
+            <span style={styles.navLinkItem} onClick={() => scrollToSection('psi')}>Segurança</span>
+            <div style={styles.navDivider}></div>
+            <button style={styles.btnNavText} onClick={goToLogin}><LogIn size={16} /> Entrar</button>
+            <button style={styles.btnNavAction} onClick={goToCadastro}>Primeiro Acesso</button>
           </div>
 
           <button className="mobileMenuBtn" style={styles.mobileMenuBtn} onClick={toggleMenu}>
@@ -71,251 +71,237 @@ const Home = () => {
           </button>
         </nav>
         
-        {/* MENU MOBILE EXPANSÍVEL */}
-        {isMenuOpen && (
-          <div className="mobileMenuDropdown" style={{...styles.mobileMenuDropdown, backgroundColor: assets.structureColor}}>
-            <span style={styles.navLinkItem} onClick={scrollToAbout}>Sobre</span>
-            <button style={styles.btnNavText} onClick={goToLogin}>Entrar</button>
-            <button style={{...styles.btnNavAction, width: '100%', justifyContent: 'center'}} onClick={goToCadastro}>Cadastrar-se</button>
-          </div>
-        )}
-      </div>
-
-      {/* SEÇÃO HERO */}
-      <header style={{...styles.heroSection, backgroundColor: assets.structureColor, border: `1px solid ${assets.borderColor}`}} className="heroSection">
-        <div style={styles.heroLayout} className="heroLayout">
-          <div style={styles.visualContainer} className="heroVisual">
-            <div style={{...styles.floatingTag, backgroundColor: assets.structureColor}}>
-              <Activity size={16} color="#00b247" />
-              <span>Ambiente Seguro</span>
+        {/* MOBILE MENU DROPDOWN */}
+        <div className={`mobileMenuDropdown ${isMenuOpen ? 'active' : ''}`} style={styles.mobileMenuDropdown}>
+            <div className="mobileMenuInner" style={styles.mobileMenuInner}>
+                <span style={styles.navLinkMobile} onClick={() => scrollToSection('sobre')}>Home</span>
+                <span style={styles.navLinkMobile} onClick={() => scrollToSection('psi')}>Segurança P.S.I</span>
+                <div style={styles.mobileActionGroup}>
+                    <button style={styles.btnMobileAction} onClick={goToLogin}>Entrar no Sistema</button>
+                    <button style={styles.btnNavTextMobile} onClick={goToCadastro}>Criar Conta</button>
+                </div>
             </div>
-            <div style={{...styles.carDisplay, backgroundImage: `url(${assets.heroVehicle})`}} className="carDisplay">
-                <div style={styles.vignetteOverlay}></div>
-                <div style={styles.scanOverlay}></div>
-            </div>
-            <div style={styles.statusBox}>
-              <div style={styles.pulse}></div>
-              <span>DIAMANTINA • MG</span>
-            </div>
-          </div>
-
-          <div style={styles.textContainer} className="textContainer">
-            <h1 style={styles.mainTitle} className="mainTitle">
-              SEGURANÇA 24H <br />
-              <span style={{color: '#00b247'}}>PARA SEU VEÍCULO</span>
-            </h1>
-            <p style={styles.mainSubtitle}>
-              Líder em gestão de estacionamentos em Diamantina, utilizando algoritmos 
-              de alta precisão para monitoramento ininterrupto.
-            </p>
-            <div style={styles.buttonGroup} className="buttonGroup">
-              <button style={styles.btnPrimary} onClick={goToLogin}>
-                ESTACIONE AGORA <ArrowRight size={18} />
-              </button>
-              <div style={styles.divider} className="heroDivider"></div>
-              <div style={styles.partnerInfo}>
-                <ShieldCheck size={20} color="#00b247" />
-                <span>Local Monitorado</span>
-              </div>
-            </div>
-          </div>
         </div>
       </header>
 
-      {/* SEÇÃO: NOSSA ESSÊNCIA */}
-      <section id="sobre" style={styles.aboutSection} className="aboutSection">
-        <div style={styles.aboutGrid} className="aboutGrid">
-          <div style={styles.aboutTextContent}>
-            <h2 style={styles.sectionTitle}>Nossa Essência</h2>
-            <p style={styles.aboutText}>
-              O <strong>Logo Ali</strong> nasceu da necessidade de redefinir a mobilidade e segurança em Diamantina. 
-              Fundado por desenvolvedores da <strong>UFVJM</strong>, unimos tecnologia de ponta com a hospitalidade mineira 
-              para oferecer um ecossistema digital onde seu veículo é monitorado com precisão cirúrgica. 
+      {/* HERO SECTION */}
+      <section id="sobre" style={styles.heroSection} className="heroSection">
+        <div className="backgroundGrid"></div>
+        <div style={styles.heroLayout} className="heroLayout">
+          
+          <div style={styles.textContainer} className="textContainer">
+            <div style={styles.badge} className="badge">
+                <Sparkles size={12} />
+                <span>Estacione e gerencie tudo pelo Celular</span>
+            </div>
+            <h1 style={styles.mainTitle} className="mainTitle">
+             Estacionamento<br />
+              <span className="textAccentShadow">24h</span>
+            </h1>
+            <p style={styles.mainSubtitle} className="mainSubtitle">
+              Gestão inteligente e segurança total. O <strong>Logo Ali</strong> redefine a experiência de cuidar do seu veiculo.
             </p>
-            <p style={styles.aboutText}>
-              Nossa missão é simplificar a vida de quem circula pela cidade, garantindo que a última coisa com que você 
-              precise se preocupar seja a segurança do seu patrimônio. Estacione e viva a cidade com total confiança.
-            </p>
+            <div style={styles.buttonGroup} className="heroButtons">
+              <button className="btn-glow" style={styles.btnPrimary} onClick={goToLogin}>ESTACIONAR AGORA</button>
+              <button style={styles.btnSecondary} onClick={() => scrollToSection('psi')}>SAIBA MAIS</button>
+            </div>
           </div>
-          <div style={styles.aboutStats} className="aboutStats">
-            <div style={{...styles.statCard, backgroundColor: assets.structureColor, border: `1px solid ${assets.borderColor}`}}>
-              <span style={styles.statNum}>100%</span>
-              <span style={styles.statLabel}>Tecnologia Local</span>
-            </div>
-            <div style={{...styles.statCard, backgroundColor: assets.structureColor, border: `1px solid ${assets.borderColor}`}}>
-              <span style={styles.statNum}>24h</span>
-              <span style={styles.statLabel}>Monitoramento</span>
-            </div>
+
+          <div style={styles.visualContainer} className="heroVisual">
+            <img 
+              src={assets.heroVehicle} 
+              alt="Veículo" 
+              style={styles.heroImage} 
+              className="carImage"
+            />
           </div>
         </div>
       </section>
 
-      {/* BENTO GRID */}
-      <main style={styles.mainGrid} className="mainGrid">
-        <div style={styles.bentoWrapper} className="bentoWrapper">
-          <div style={{...styles.cardSmall, backgroundColor: assets.structureColor, border: `1px solid ${assets.borderColor}`}}>
-            <div style={styles.cardHeader}>
-              <Gauge size={20} color="#00b247" />
-              <span style={styles.cardLabel}>CONTROLE DE VAGAS</span>
-            </div>
-            <div style={styles.gaugeContainer}>
-              <div style={styles.gaugeValue}>4550</div>
-              <div style={styles.gaugeSub}>VAGAS MONITORADAS</div>
-            </div>
-            <button style={styles.cardBtn} onClick={goToLogin}>Saiba mais</button>
-          </div>
-
-          <div style={{...styles.cardSmall, backgroundColor: assets.structureColor, border: `1px solid ${assets.borderColor}`}}>
-            <div style={styles.cardHeader}>
-              <Cpu size={20} color="#00b247" />
-              <span style={styles.cardLabel}>SISTEMA AUTOMATIZADO</span>
-            </div>
-            <h3 style={styles.cardTitle}>Segurança Ativa</h3>
-            <p style={styles.cardText}>Resultados rápidos com códigos únicos de entrada e saída para cada cliente.</p>
-          </div>
-
-          <div style={{...styles.cardDark, backgroundColor: '#131612', border: '1px solid #2a3028'}}>
-             <div style={styles.darkContent}>
-                <Battery size={24} color="#00b247" />
-                <h4 style={styles.darkLabel}>ECOSSISTEMA DIGITAL</h4>
-                <p style={styles.darkText}>
-                  Uma infraestrutura completa que simplifica a gestão e o cadastro de veículos em Diamantina.
-                </p>
-                <button style={styles.learnMore} onClick={scrollToAbout}>Ver detalhes</button>
-             </div>
-          </div>
+      {/* SEÇÃO PSI */}
+      <section id="psi" style={styles.psiSection}>
+        <div style={styles.sectionHeader}>
+            <h2 style={styles.sectionTitle}>P.S.I</h2>
+            <p style={styles.sectionSub}>Política de Segurança de Informação</p>
         </div>
-      </main>
+        <div style={styles.psiGrid} className="psiGrid">
+            <div style={styles.psiCard} className="glassCard">
+                <Lock size={28} color={assets.accent} />
+                <h3 style={styles.cardTitle}>Integridade</h3>
+                <p style={styles.cardText}>Garantimos a proteção contra alterações não autorizadas em todos os registros do sistema.</p>
+            </div>
+            <div style={styles.psiCard} className="glassCard">
+                <Eye size={28} color={assets.accent} />
+                <h3 style={styles.cardTitle}>Privacidade</h3>
+                <p style={styles.cardText}>Acesso restrito garantindo que apenas usuários autorizados visualizem dados sensíveis.</p>
+            </div>
+            <div style={styles.psiCard} className="glassCard">
+                <FileText size={28} color={assets.accent} />
+                <h3 style={styles.cardTitle}>Disponibilidade</h3>
+                <p style={styles.cardText}>Infraestrutura resiliente para assegurar que o sistema esteja pronto para operar em Diamantina.</p>
+            </div>
+        </div>
+      </section>
 
       {/* FOOTER */}
-      <footer style={styles.footer} className="footer">
-        <div style={styles.footerGrid} className="footerGrid">
-          <div>
-            <div style={{...styles.logoGroup, marginBottom: '15px'}} className="footerLogo" onClick={() => window.location.href = '/'}>
-               <Car size={24} color="#00b247" />
-               <span style={{...styles.logoText, color: '#fff'}}>LOGO ALI</span>
+      <footer style={styles.footer}>
+        <div style={styles.footerInner}>
+            <div style={styles.logoGroup}>
+                <Car size={20} color={assets.accent} />
+                <span style={styles.logoText}>LOGO ALI</span>
             </div>
-            <p style={styles.footerDesc}>A nova era da segurança veicular em Minas Gerais. Tecnologia, transparência e proteção.</p>
-          </div>
-          <div style={styles.footerLinks}>
-            <span style={styles.footerLinkTitle}>Serviços</span>
-            <p onClick={goToLogin} style={{cursor: 'pointer'}}>Registro de veículos</p>
-            <p>Controle de vagas</p>
-          </div>
-          <div style={styles.footerLinks}>
-            <span style={styles.footerLinkTitle}>Informações</span>
-            <p onClick={scrollToAbout} style={{cursor: 'pointer'}}>Nossa Essência</p>
-            <p>Política de privacidade</p>
-          </div>
+            <div style={styles.footerCopyright}>
+                © 2026 Daniel Rodrigues Pereira | UFVJM
+            </div>
         </div>
-        <p style={styles.copyright}>© 2026 LOGO ALI ESTACIONAMENTOS • DIAMANTINA, MG</p>
       </footer>
     </div>
   );
 };
 
 const styles = {
-  container: { backgroundColor: '#111310', minHeight: '100vh', fontFamily: '"Inter", sans-serif', color: '#fff', padding: '20px' },
-  navWrapper: { display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', position: 'sticky', top: '20px', zIndex: 1000 },
-  navbar: {
-    display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', maxWidth: '1200px',
-    backdropFilter: 'blur(20px)', padding: '12px 30px', borderRadius: '25px', boxShadow: '0 15px 35px rgba(0,0,0,0.5)'
-  },
-  logoGroup: { display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' },
-  brandLogo: { height: '32px', width: 'auto' },
-  logoText: { fontWeight: '800', fontSize: '1.1rem', color: '#fff' },
-  navLinks: { display: 'flex', alignItems: 'center', gap: '20px' },
-  navLinkItem: { fontSize: '0.85rem', fontWeight: '600', color: '#aaa', cursor: 'pointer', transition: '0.3s' },
-  btnNavText: { background: 'none', border: 'none', color: '#fff', fontSize: '0.85rem', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' },
-  btnNavAction: { backgroundColor: '#00b247', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '12px', fontWeight: '800', fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', transition: '0.3s' },
+  container: { backgroundColor: '#020502', minHeight: '100vh', fontFamily: '"Inter", sans-serif', color: '#fff', overflowX: 'hidden', position: 'relative' },
+  navWrapper: { display: 'flex', justifyContent: 'center', width: '100%', position: 'fixed', zIndex: 1000, transition: 'all 0.4s ease' },
+  navbar: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', maxWidth: '1100px', backdropFilter: 'blur(30px)', padding: '12px 24px', borderRadius: '100px', border: '1px solid rgba(255,255,255,0.08)' },
+  logoGroup: { display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' },
+  logoIcon: { backgroundColor: 'rgba(0,240,97,0.1)', padding: '8px', borderRadius: '50%' },
+  logoText: { fontWeight: '900', fontSize: '0.85rem', letterSpacing: '1px' },
+  navLinks: { display: 'flex', alignItems: 'center', gap: '25px' },
+  navDivider: { width: '1px', height: '20px', backgroundColor: 'rgba(255,255,255,0.1)' },
+  navLinkItem: { fontSize: '0.75rem', fontWeight: '500', color: '#aaa', cursor: 'pointer' },
+  btnNavText: { background: 'none', border: 'none', color: '#fff', fontSize: '0.8rem', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' },
+  btnNavAction: { backgroundColor: '#fff', color: '#000', border: 'none', padding: '10px 20px', borderRadius: '100px', fontWeight: '800', fontSize: '0.75rem', cursor: 'pointer' },
   mobileMenuBtn: { display: 'none', background: 'none', border: 'none', cursor: 'pointer' },
+  
   mobileMenuDropdown: { 
-    width: '100%', maxWidth: '1200px', marginTop: '10px', padding: '20px', borderRadius: '20px', 
-    display: 'flex', flexDirection: 'column', gap: '15px', border: '1px solid rgba(255,255,255,0.08)' 
+    position: 'fixed', top: '0', left: '0', width: '100%', height: '0',
+    backgroundColor: 'rgba(2,5,2,0.98)', backdropFilter: 'blur(20px)',
+    overflow: 'hidden', transition: '0.5s cubic-bezier(0.16, 1, 0.3, 1)', zIndex: 999,
+    display: 'flex', flexDirection: 'column', justifyContent: 'center'
   },
+  mobileMenuInner: { padding: '40px', display: 'flex', flexDirection: 'column', gap: '25px', opacity: 0, transition: '0.3s' },
+  navLinkMobile: { fontSize: '1.8rem', fontWeight: '900', color: '#fff', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '10px' },
+  mobileActionGroup: { display: 'flex', flexDirection: 'column', gap: '15px', marginTop: '20px' },
+  btnMobileAction: { padding: '18px', backgroundColor: '#00f061', color: '#000', border: 'none', borderRadius: '16px', fontWeight: '900', fontSize: '1rem' },
+  btnNavTextMobile: { padding: '18px', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', borderRadius: '16px', background: 'none', fontWeight: '700' },
 
-  heroSection: {
-    maxWidth: '1250px', margin: '30px auto', borderRadius: '50px', padding: '60px',
-    boxShadow: '0 40px 100px rgba(0,0,0,0.6)', position: 'relative', overflow: 'hidden'
-  },
-  heroLayout: { display: 'flex', alignItems: 'center', gap: '60px', flexWrap: 'wrap' },
-  visualContainer: { flex: 1, position: 'relative', minWidth: '320px' },
-  carDisplay: { width: '100%', height: '400px', borderRadius: '40px', overflow: 'hidden', position: 'relative', backgroundSize: 'cover', backgroundPosition: 'center' },
-  vignetteOverlay: { position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, transparent 40%, rgba(17,19,16,0.9) 100%)' },
-  scanOverlay: { position: 'absolute', top: '20%', left: '20%', width: '150px', height: '150px', background: 'radial-gradient(circle, rgba(0,178,71,0.1) 0%, transparent 70%)', borderRadius: '50%', border: '1.5px solid #00b247' },
-  floatingTag: { position: 'absolute', top: '-15px', left: '-10px', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', padding: '10px 20px', borderRadius: '20px', display: 'flex', alignItems: 'center', gap: '10px', zIndex: 2, fontSize: '0.75rem', fontWeight: '800' },
-  statusBox: { position: 'absolute', bottom: '25px', right: '25px', backgroundColor: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(10px)', padding: '10px 20px', borderRadius: '15px', fontSize: '0.7rem', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '8px' },
-  pulse: { width: '8px', height: '8px', backgroundColor: '#00b247', borderRadius: '50%', boxShadow: '0 0 12px #00b247' },
+  heroSection: { maxWidth: '1200px', margin: '0 auto', paddingTop: '160px', position: 'relative', minHeight: '100vh', display: 'flex', alignItems: 'center' },
+  heroLayout: { display: 'flex', alignItems: 'center', gap: '40px', flexWrap: 'wrap', width: '100%' },
+  textContainer: { flex: 1.2, minWidth: '320px', zIndex: 10 },
+  badge: { display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(0,240,97,0.1)', padding: '8px 16px', borderRadius: '100px', width: 'fit-content', fontSize: '0.65rem', fontWeight: '800', color: '#00f061', marginBottom: '24px', border: '1px solid rgba(0,240,97,0.2)' },
+  mainTitle: { fontSize: 'clamp(2.8rem, 9vw, 5.5rem)', fontWeight: '900', lineHeight: '0.95', marginBottom: '25px', letterSpacing: '-3px' },
+  mainSubtitle: { color: 'rgba(255,255,255,0.6)', fontSize: '1.1rem', marginBottom: '40px', lineHeight: '1.6', maxWidth: '480px' },
+  buttonGroup: { display: 'flex', gap: '15px' },
+  btnPrimary: { backgroundColor: '#00f061', color: '#000', border: 'none', padding: '18px 36px', borderRadius: '16px', fontWeight: '900', cursor: 'pointer', fontSize: '0.9rem' },
+  btnSecondary: { backgroundColor: 'rgba(255,255,255,0.05)', color: '#fff', border: '1px solid rgba(255,255,255,0.1)', padding: '18px 36px', borderRadius: '16px', fontWeight: '700', cursor: 'pointer' },
 
-  textContainer: { flex: 1, minWidth: '300px' },
-  mainTitle: { fontSize: 'clamp(2.5rem, 5vw, 4rem)', fontWeight: '900', lineHeight: '1.1', marginBottom: '25px', letterSpacing: '-2px' },
-  mainSubtitle: { color: '#8d948a', fontSize: '1.1rem', marginBottom: '45px', lineHeight: '1.6' },
-  buttonGroup: { display: 'flex', alignItems: 'center', gap: '20px', flexWrap: 'wrap' },
-  btnPrimary: { backgroundColor: '#00b247', color: '#fff', border: 'none', padding: '20px 40px', borderRadius: '18px', fontWeight: '900', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '12px' },
-  divider: { width: '1px', height: '40px', backgroundColor: 'rgba(255,255,255,0.1)' },
-  partnerInfo: { display: 'flex', alignItems: 'center', gap: '10px', fontWeight: '700', color: '#fff' },
+  visualContainer: { flex: 1.4, position: 'relative', display: 'flex', justifyContent: 'center', alignSelf: 'flex-end' },
+  heroImage: { width: '130%', height: 'auto', zIndex: 5, filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.6))' },
 
-  aboutSection: { maxWidth: '1250px', margin: '100px auto', padding: '0 60px' },
-  aboutGrid: { display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '60px', alignItems: 'center' },
-  sectionTitle: { fontSize: '2.5rem', fontWeight: '900', color: '#fff', marginBottom: '30px', letterSpacing: '-1.5px' },
-  aboutText: { fontSize: '1.1rem', color: '#8d948a', lineHeight: '1.8', marginBottom: '20px' },
-  aboutStats: { display: 'flex', flexDirection: 'column', gap: '20px' },
-  statCard: { padding: '30px', borderRadius: '30px', textAlign: 'center' },
-  statNum: { display: 'block', fontSize: '3rem', fontWeight: '900', color: '#00b247', marginBottom: '5px' },
-  statLabel: { fontSize: '0.8rem', fontWeight: '800', color: '#fff', textTransform: 'uppercase', letterSpacing: '2px' },
+  psiSection: { maxWidth: '1100px', margin: '80px auto', padding: '0 20px' },
+  sectionHeader: { textAlign: 'center', marginBottom: '50px' },
+  sectionTitle: { fontSize: '2.5rem', fontWeight: '900', letterSpacing: '-1px' },
+  sectionSub: { color: 'rgba(255,255,255,0.4)', fontSize: '1rem' },
+  psiGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '25px' },
+  psiCard: { padding: '40px', borderRadius: '32px' },
+  cardTitle: { fontSize: '1.3rem', fontWeight: '800', marginTop: '10px' },
+  cardText: { color: 'rgba(255,255,255,0.5)', fontSize: '0.9rem', lineHeight: '1.5' },
 
-  mainGrid: { maxWidth: '1250px', margin: '20px auto 100px' },
-  bentoWrapper: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '25px' },
-  cardSmall: { borderRadius: '35px', padding: '40px', display: 'flex', flexDirection: 'column', gap: '25px' },
-  cardHeader: { display: 'flex', alignItems: 'center', gap: '12px' },
-  cardLabel: { fontSize: '0.75rem', fontWeight: '900', color: '#6d756b', letterSpacing: '1px' },
-  gaugeContainer: { textAlign: 'center' },
-  gaugeValue: { fontSize: '3.5rem', fontWeight: '900', color: '#fff' },
-  gaugeSub: { fontSize: '0.75rem', color: '#00b247', fontWeight: '800' },
-  cardBtn: { backgroundColor: 'rgba(255,255,255,0.05)', border: 'none', padding: '14px', borderRadius: '15px', fontWeight: '800', color: '#fff', cursor: 'pointer' },
-  cardTitle: { fontSize: '1.6rem', fontWeight: '900', margin: 0 },
-  cardText: { color: '#8d948a', fontSize: '1rem', lineHeight: '1.6', margin: 0 },
-
-  cardDark: { borderRadius: '35px', padding: '40px', display: 'flex', alignItems: 'center' },
-  darkContent: { display: 'flex', flexDirection: 'column', gap: '20px' },
-  darkLabel: { color: '#4a5248', fontSize: '0.8rem', fontWeight: '900', margin: 0 },
-  darkText: { color: '#8d948a', fontSize: '1rem', lineHeight: '1.7', margin: 0 },
-  learnMore: { background: 'none', border: 'none', color: '#00b247', padding: 0, fontWeight: '800', cursor: 'pointer', textDecoration: 'underline' },
-
-  footer: { maxWidth: '1200px', margin: '0 auto', padding: '60px 20px', borderTop: '1px solid rgba(255,255,255,0.05)' },
-  footerGrid: { display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: '50px', marginBottom: '40px' },
-  footerDesc: { color: '#555', fontSize: '0.95rem', lineHeight: '1.6' },
-  footerLinkTitle: { fontWeight: '900', marginBottom: '20px', color: '#fff' },
-  footerLinks: { color: '#666', fontSize: '0.9rem', display: 'flex', flexDirection: 'column', gap: '12px' },
-  copyright: { textAlign: 'center', fontSize: '0.7rem', color: '#333', fontWeight: '700', marginTop: '30px' }
+  footer: { borderTop: '1px solid rgba(255,255,255,0.05)', padding: '40px 20px' },
+  footerInner: { maxWidth: '1100px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px' },
+  footerCopyright: { fontSize: '0.7rem', color: 'rgba(255,255,255,0.2)' }
 };
 
-const ResponsiveStyle = () => (
+const ResponsiveStyle = ({assets, isMenuOpen}) => (
   <style>{`
+    .textAccentShadow { color: ${assets.accent}; text-shadow: 0 0 40px rgba(0, 240, 97, 0.3); }
+    
+    .liquid-orb { position: fixed; border-radius: 50%; filter: blur(100px); z-index: 0; pointer-events: none; opacity: 0.1; }
+    .orb-1 { width: 500px; height: 500px; background: ${assets.accent}; top: -100px; right: -100px; }
+    .orb-2 { width: 400px; height: 400px; background: #0080ff; bottom: -50px; left: -50px; }
+
+    .backgroundGrid {
+        position: absolute; inset: 0; 
+        background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+        background-size: 40px 40px; z-index: 1; mask-image: radial-gradient(circle at 50% 50%, black, transparent 85%);
+    }
+
+    .glassCard { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(40px); border: 1px solid rgba(255, 255, 255, 0.05); transition: 0.3s ease; }
+    .glassCard:hover { transform: translateY(-5px); border-color: ${assets.accent}33; }
+
+    .btn-glow:hover { box-shadow: 0 0 30px ${assets.accent}44; transform: translateY(-2px); }
+
     @media (max-width: 968px) {
       .desktopNav { display: none !important; }
       .mobileMenuBtn { display: block !important; }
-      .heroSection { padding: 40px 25px !important; border-radius: 35px !important; margin: 15px auto !important; }
-      .heroLayout { gap: 30px !important; flex-direction: column !important; }
-      .heroVisual { width: 100% !important; min-width: unset !important; order: 2 !important; }
-      .carDisplay { height: 280px !important; border-radius: 25px !important; }
-      .textContainer { text-align: center !important; width: 100% !important; order: 1 !important; }
-      .mainTitle { font-size: 2.2rem !important; }
-      .buttonGroup { justify-content: center !important; gap: 15px !important; }
-      .heroDivider { display: none !important; }
       
-      .aboutSection { padding: 0 20px !important; margin: 60px auto !important; }
-      .aboutGrid { grid-template-columns: 1fr !important; gap: 40px !important; text-align: center !important; }
-      .aboutStats { flex-direction: row !important; gap: 15px !important; justify-content: center !important; }
-      .statCard { padding: 20px !important; flex: 1 !important; }
-      .statNum { font-size: 2rem !important; }
+      .heroSection { 
+        padding-top: 100px !important;
+        min-height: 100vh !important;
+        overflow: hidden;
+      }
 
-      .mainGrid { margin-bottom: 60px !important; }
-      .bentoWrapper { grid-template-columns: 1fr !important; }
-      .cardSmall { padding: 30px !important; border-radius: 25px !important; }
+      .heroLayout { 
+        flex-direction: column !important;
+        text-align: center !important;
+        gap: 20px !important;
+        width: 100% !important;
+        padding: 0 20px !important;
+        margin: 0 !important;
+      }
 
-      .footerGrid { grid-template-columns: 1fr !important; gap: 30px !important; text-align: center !important; }
-      .footerLogo { justify-content: center !important; }
+      .textContainer { 
+        min-width: 100% !important;
+        width: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+      }
+
+      .badge { margin-bottom: 15px !important; }
+      
+      .mainTitle { 
+        font-size: 3.2rem !important; 
+        line-height: 1.1 !important;
+        width: 100% !important;
+      }
+
+      .mainSubtitle { 
+        font-size: 1rem !important;
+        max-width: 100% !important;
+        margin-bottom: 30px !important;
+      }
+
+      .heroButtons { 
+        flex-direction: column !important;
+        width: 100% !important;
+        gap: 12px !important;
+      }
+
+      .btnPrimary, .btnSecondary { 
+        width: 100% !important;
+        padding: 18px !important;
+      }
+
+      .visualContainer { 
+        width: 100% !important;
+        margin-top: 20px !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-self: center !important;
+        position: relative !important;
+      }
+
+      .carImage { 
+        width: 110% !important; 
+        max-width: none !important;
+        transform: translateY(10px) !important;
+      }
+
+      .mobileMenuDropdown.active { height: 100vh !important; }
+      .mobileMenuDropdown.active .mobileMenuInner { opacity: 1 !important; transition-delay: 0.2s; }
+      
+      .psiGrid { grid-template-columns: 1fr !important; }
     }
   `}</style>
 );
