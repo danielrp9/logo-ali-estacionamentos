@@ -1,8 +1,3 @@
-"""
-LogoAli/Logo Ali - Parking Management System (Security Protocol Enforcer)
-Author: Daniel Rodrigues Pereira | Year: 2026
-Finalidade: Gerenciamento granular de SSL (HTTP/HTTPS) conforme Norma N08.6 da PSI.
-"""
 from django.http import HttpResponseRedirect
 
 class ProtocolEnforcerMiddleware:

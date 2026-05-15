@@ -1,9 +1,3 @@
-"""
-Logo Ali Estacionamentos - Admin Configuration (Deep Audit Edition)
-Author: Daniel Rodrigues Pereira | Year: 2026
-Finalidade: Auditoria de valores (De -> Para) conforme Normas N07.1
-"""
-
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.admin.models import LogEntry, ADDITION, CHANGE, DELETION

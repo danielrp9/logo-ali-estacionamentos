@@ -1,7 +1,3 @@
-"""
-LogoAli/Logo Ali - Serializers (Versão Vínculo Dinâmico)
-Author: Daniel Rodrigues Pereira | Year: 2026
-"""
 from rest_framework import serializers
 from .models import Veiculo, Usuario
 from django.contrib.auth.password_validation import validate_password

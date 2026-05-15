@@ -1,8 +1,3 @@
-"""
-Logo Ali Estacionamentos - views.py (Versão Definitiva - Auditoria Integrada)
-Author: Daniel Rodrigues Pereira | Year: 2026
-Finalidade: Gerenciamento de rotas com travas de segurança e auditoria de API (N01.4).
-"""
 import stripe
 from django.conf import settings 
 from django.urls import reverse

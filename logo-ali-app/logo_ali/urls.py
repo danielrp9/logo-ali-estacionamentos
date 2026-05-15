@@ -1,7 +1,3 @@
-"""
-LogoAli/Logo Ali - URL Configuration Principal
-Author: Daniel Rodrigues Pereira
-"""
 import os
 from django.contrib import admin
 from django.urls import path, include, re_path

@@ -2,17 +2,20 @@
  * Logo Ali Estacionamentos - Future-Core v4.3 (Mobile Fix Absolute)
  * Author: Daniel Rodrigues Pereira | Year: 2026
  * Estética: Kinetic Glass / Deep Grid / Grounded Composition
+ * Modificação: Integração Isolada da PSI com Modal de Visualização Integral
  */
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Car, ArrowRight, Menu, X, 
-  LogIn, Lock, Eye, FileText, Zap, Sparkles
+  LogIn, Lock, Eye, FileText, Zap, Sparkles, ShieldCheck
 } from 'lucide-react';
+import { psiContent } from '../components/PsiData';
 
 const Home = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [isPsiModalOpen, setIsPsiModalOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -37,10 +40,11 @@ const Home = () => {
 
   const goToLogin = () => window.location.href = '/login/';
   const goToCadastro = () => window.location.href = '/cadastro/';
+  const togglePsiModal = () => setIsPsiModalOpen(!isPsiModalOpen);
 
   return (
     <div style={styles.container}>
-      <ResponsiveStyle assets={assets} isMenuOpen={isMenuOpen} />
+      <ResponsiveStyle assets={assets} isMenuOpen={isMenuOpen} isPsiModalOpen={isPsiModalOpen} />
       
       {/* BACKGROUND ELEMENTS */}
       <div className="liquid-orb orb-1"></div>
@@ -141,7 +145,145 @@ const Home = () => {
                 <p style={styles.cardText}>Infraestrutura resiliente para assegurar que o sistema esteja pronto para operar em Diamantina.</p>
             </div>
         </div>
+        
+        {/* BOTÃO PARA EXPANDIR CONTEÚDO COMPLETO DO ISOLADO */}
+        <div style={styles.psiExpandContainer}>
+          <button style={styles.btnPsiExpand} onClick={togglePsiModal} className="btn-glow">
+            <ShieldCheck size={18} style={{ marginRight: '8px' }} />
+            Visualizar Documento Completo (PSI)
+          </button>
+        </div>
       </section>
+
+      {/* MODAL ISOLADO DA POLÍTICA DE SEGURANÇA DA INFORMAÇÃO */}
+      {isPsiModalOpen && (
+        <div style={styles.modalOverlay} onClick={togglePsiModal}>
+          <div style={styles.modalContent} onClick={(e) => e.stopPropagation()} className="glassCard">
+            <div style={styles.modalHeader}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <ShieldCheck size={24} color={assets.accent} />
+                <h2 style={styles.modalTitle}>{psiContent.title}</h2>
+              </div>
+              <button style={styles.modalCloseBtn} onClick={togglePsiModal}>
+                <X size={24} color="#fff" />
+              </button>
+            </div>
+            <div style={styles.modalBody}>
+              {/* METADADOS / CAPA DA PSI */}
+              {psiContent.metadata && (
+                <div style={{...styles.psiTextSection, borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '20px', marginBottom: '10px'}}>
+                  <p style={{fontSize: '0.8rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '1px', margin: '0 0 10px 0'}}>Informações Institucionais</p>
+                  <p style={styles.psiTextParagraph}><strong>Autores:</strong> {psiContent.metadata.authors.join(', ')}</p>
+                  <p style={styles.psiTextParagraph}><strong>Disciplina:</strong> {psiContent.metadata.course} | <strong>Docente:</strong> {psiContent.metadata.professor}</p>
+                  <p style={styles.psiTextParagraph}><strong>Local e Ano:</strong> {psiContent.metadata.location} - {psiContent.metadata.year}</p>
+                  
+                  {/* CONTROLE DE VERSÃO */}
+                  <div style={{marginTop: '20px'}}>
+                    <h4 style={{fontSize: '0.9rem', color: '#fff', marginBottom: '10px'}}>{psiContent.metadata.versionControl.title}</h4>
+                    <p style={{fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)', marginBottom: '8px'}}>{psiContent.metadata.versionControl.description}</p>
+                    <div style={{overflowX: 'auto'}}>
+                      <table style={styles.table}>
+                        <thead>
+                          <tr>
+                            {psiContent.metadata.versionControl.headers.map((header, hIdx) => (
+                              <th key={hIdx} style={styles.tableHeader}>{header}</th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {psiContent.metadata.versionControl.rows.map((row, rIdx) => (
+                            <tr key={rIdx}>
+                              <td style={styles.tableCell}>{row.version}</td>
+                              <td style={styles.tableCell}>{row.date}</td>
+                              <td style={styles.tableCell}>{row.description}</td>
+                              <td style={styles.tableCell}>{row.responsible}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  {/* RESUMO */}
+                  <div style={{marginTop: '20px', backgroundColor: 'rgba(255,255,255,0.01)', padding: '15px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.03)'}}>
+                    <h4 style={{fontSize: '0.9rem', color: assets.accent, marginBottom: '8px'}}>{psiContent.metadata.summary.title}</h4>
+                    <p style={{...styles.psiTextParagraph, fontSize: '0.85rem', fontStyle: 'italic'}}>{psiContent.metadata.summary.text}</p>
+                    <p style={{...styles.psiTextParagraph, fontSize: '0.8rem', marginTop: '8px', color: 'rgba(255,255,255,0.5)'}}>
+                      <strong>Palavras-chave:</strong> {psiContent.metadata.summary.keywords.join(', ')}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* INTRODUÇÃO */}
+              <div style={styles.psiTextSection}>
+                <h3 style={styles.psiTextTitle}>{psiContent.introduction.title}</h3>
+                <p style={styles.psiTextParagraph}>{psiContent.introduction.text}</p>
+              </div>
+              
+              {/* SEÇÕES DINÂMICAS */}
+              {psiContent.sections.map((section, idx) => (
+                <div key={idx} style={styles.psiTextSection}>
+                  <h3 style={styles.psiTextTitle}>{section.title}</h3>
+                  {section.text && <p style={styles.psiTextParagraph}>{section.text}</p>}
+                  
+                  {/* COMPONENTE DE SEÇÕES COM BULLETS */}
+                  {section.bullets && (
+                    <ul style={styles.psiList}>
+                      {section.bullets.map((bullet, bIdx) => (
+                        <li key={bIdx} style={styles.psiListItem}>{bullet}</li>
+                      ))}
+                    </ul>
+                  )}
+
+                  {/* COMPONENTE DE SEÇÕES COM SUBSEÇÕES (EX: RESPONSABILIDADES / NORMAS) */}
+                  {section.subsections && section.subsections.map((sub, sIdx) => (
+                    <div key={sIdx} style={{marginTop: '12px', paddingLeft: '10px'}}>
+                      <h4 style={{fontSize: '1rem', fontWeight: '700', color: '#fff', marginBottom: '8px'}}>{sub.title}</h4>
+                      {sub.text && <p style={styles.psiTextParagraph}>{sub.text}</p>}
+                      {sub.bullets && (
+                        <ul style={styles.psiList}>
+                          {sub.bullets.map((b, bulletIdx) => (
+                            <li key={bulletIdx} style={styles.psiListItem}>{b}</li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  ))}
+
+                  {/* COMPONENTE DE TABELA INTERNA (EX: CLASSIFICAÇÃO DA INFORMAÇÃO) */}
+                  {section.table && (
+                    <div style={{overflowX: 'auto', marginTop: '10px'}}>
+                      <table style={styles.table}>
+                        <thead>
+                          <tr>
+                            {section.table.headers.map((header, hIdx) => (
+                              <th key={hIdx} style={styles.tableHeader}>{header}</th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {section.table.rows.map((row, rIdx) => (
+                            <tr key={rIdx}>
+                              <td style={{...styles.tableCell, fontWeight: '700'}}>{row.type}</td>
+                              <td style={{...styles.tableCell, color: row.classification === 'Confidencial' ? '#ff4d4d' : row.classification === 'Interno' ? '#0080ff' : assets.accent}}>{row.classification}</td>
+                              <td style={styles.tableCell}>{row.description}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+            <div style={styles.modalFooter}>
+              <button style={styles.btnModalClose} onClick={togglePsiModal}>Fechar Visualização</button>
+              <button style={styles.btnModalAction} onClick={goToLogin}>Ir para Ambiente Seguro (Login)</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* FOOTER */}
       <footer style={styles.footer}>
@@ -206,13 +348,37 @@ const styles = {
   psiCard: { padding: '40px', borderRadius: '32px' },
   cardTitle: { fontSize: '1.3rem', fontWeight: '800', marginTop: '10px' },
   cardText: { color: 'rgba(255,255,255,0.5)', fontSize: '0.9rem', lineHeight: '1.5' },
+  
+  psiExpandContainer: { display: 'flex', justifyContent: 'center', marginTop: '40px' },
+  btnPsiExpand: { backgroundColor: 'rgba(255,255,255,0.03)', color: '#fff', border: '1px solid rgba(255,255,255,0.08)', padding: '16px 32px', borderRadius: '100px', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', transition: '0.3s ease' },
+
+  /* ESTILOS DO MODAL DA PSI */
+  modalOverlay: { position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(15px)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 2000, padding: '20px' },
+  modalContent: { width: '100%', maxWidth: '850px', maxHeight: '85vh', borderRadius: '24px', display: 'flex', flexDirection: 'column', overflow: 'hidden', boxShadow: '0 30px 60px rgba(0,0,0,0.8)', border: '1px solid rgba(255,255,255,0.1)' },
+  modalHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '24px 32px', borderBottom: '1px solid rgba(255,255,255,0.08)' },
+  modalTitle: { fontSize: '1.4rem', fontWeight: '900', letterSpacing: '-0.5px' },
+  modalCloseBtn: { background: 'none', border: 'none', cursor: 'pointer', padding: '4px' },
+  modalBody: { padding: '32px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '24px', textAlign: 'left' },
+  psiTextSection: { display: 'flex', flexDirection: 'column', gap: '8px' },
+  psiTextTitle: { fontSize: '1.1rem', fontWeight: '800', color: '#00f061', marginTop: '10px' },
+  psiTextParagraph: { color: 'rgba(255,255,255,0.8)', fontSize: '0.95rem', lineHeight: '1.6', margin: '4px 0' },
+  psiList: { listStyleType: 'none', paddingLeft: '0', display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '8px' },
+  psiListItem: { color: 'rgba(255,255,255,0.75)', fontSize: '0.9rem', lineHeight: '1.5', paddingLeft: '15px', borderLeft: '2px solid rgba(0,240,97,0.3)' },
+  modalFooter: { padding: '20px 32px', borderTop: '1px solid rgba(255,255,255,0.08)', display: 'flex', justifyContent: 'flex-end', gap: '15px', flexWrap: 'wrap' },
+  btnModalClose: { background: 'none', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.6)', padding: '12px 24px', borderRadius: '12px', fontWeight: '600', cursor: 'pointer' },
+  btnModalAction: { backgroundColor: '#00f061', color: '#000', border: 'none', padding: '12px 24px', borderRadius: '12px', fontWeight: '800', cursor: 'pointer' },
+
+  /* ESTILOS DE TABELAS DA PSI */
+  table: { width: '100%', borderCollapse: 'collapse', marginTop: '10px', marginBottom: '15px', fontSize: '0.85rem', color: 'rgba(255,255,255,0.8)', backgroundColor: 'rgba(255,255,255,0.01)' },
+  tableHeader: { borderBottom: '2px solid rgba(255,255,255,0.1)', padding: '10px', textAlign: 'left', fontWeight: '700', color: '#fff', backgroundColor: 'rgba(255,255,255,0.03)' },
+  tableCell: { borderBottom: '1px solid rgba(255,255,255,0.05)', padding: '10px', textAlign: 'left', lineHeight: '1.4' },
 
   footer: { borderTop: '1px solid rgba(255,255,255,0.05)', padding: '40px 20px' },
   footerInner: { maxWidth: '1100px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px' },
   footerCopyright: { fontSize: '0.7rem', color: 'rgba(255,255,255,0.2)' }
 };
 
-const ResponsiveStyle = ({assets, isMenuOpen}) => (
+const ResponsiveStyle = ({assets, isMenuOpen, isPsiModalOpen}) => (
   <style>{`
     .textAccentShadow { color: ${assets.accent}; text-shadow: 0 0 40px rgba(0, 240, 97, 0.3); }
     
@@ -230,6 +396,8 @@ const ResponsiveStyle = ({assets, isMenuOpen}) => (
     .glassCard:hover { transform: translateY(-5px); border-color: ${assets.accent}33; }
 
     .btn-glow:hover { box-shadow: 0 0 30px ${assets.accent}44; transform: translateY(-2px); }
+
+    body { overflow: ${isPsiModalOpen ? 'hidden' : 'auto'}; }
 
     @media (max-width: 968px) {
       .desktopNav { display: none !important; }
@@ -302,6 +470,16 @@ const ResponsiveStyle = ({assets, isMenuOpen}) => (
       .mobileMenuDropdown.active .mobileMenuInner { opacity: 1 !important; transition-delay: 0.2s; }
       
       .psiGrid { grid-template-columns: 1fr !important; }
+      
+      .modalContent {
+        max-height: 95vh !important;
+      }
+      .modalFooter {
+        flex-direction: column !important;
+      }
+      .modalFooter button {
+        width: 100% !important;
+      }
     }
   `}</style>
 );
