@@ -48,7 +48,6 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'estacionamento.middleware.ProtocolEnforcerMiddleware', 
     'corsheaders.middleware.CorsMiddleware', 
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -59,6 +58,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'axes.middleware.AxesMiddleware', 
+    # Portaria de Segurança Seletiva (Executada estrategicamente após a sessão/auth)
+    'estacionamento.middleware.ProtocolEnforcerMiddleware',
 ]
 
 AUTHENTICATION_BACKENDS = [
@@ -71,41 +72,50 @@ AXES_FAILURE_LIMIT = 5
 AXES_LOCK_OUT_AT_FAILURE = True   
 AXES_LOCKOUT_PARAMETERS = ['username', 'ip_address']
 AXES_RESET_ON_SUCCESS = True     
-AXES_ENABLE_ADMIN = True  # Estende auditoria ao painel /admin
+AXES_ENABLE_ADMIN = True  
 
 # ==============================================================================
-# LOGGING (AUDITORIA DE TERMINAL)
+# LOGGING (AUDITORIA DE TERMINAL SCANNÁVEL E COLORIDA)
 # ==============================================================================
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
-        'verbose': {
-            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
-            'style': '{',
-        },
-        'simple': {
-            'format': '[AUDITORIA] {asctime} | {levelname} | {message}',
-            'style': '{',
+        'colored': {
+            '()': 'colorlog.ColoredFormatter',
+            'format': '%(asctime)s | %(log_color)s%(levelname)-8s%(reset)s | %(cyan)s%(name)-12s%(reset)s | %(message)s',
+            'datefmt': '%H:%M:%S',
+            'log_colors': {
+                'DEBUG': 'white',
+                'INFO': 'green',
+                'WARNING': 'yellow',
+                'ERROR': 'red',
+                'CRITICAL': 'bold_red',
+            },
         },
     },
     'handlers': {
         'console': {
             'level': 'INFO',
             'class': 'logging.StreamHandler',
-            'formatter': 'simple',
+            'formatter': 'colored',
         },
     },
     'loggers': {
-        'django': {
+        'django.server': {
             'handlers': ['console'],
             'level': 'INFO',
-            'propagate': True,
+            'propagate': False,
         },
         'axes': {
             'handlers': ['console'],
             'level': 'INFO',
-            'propagate': True,
+            'propagate': False,
+        },
+        'portaria': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
         },
     },
 }

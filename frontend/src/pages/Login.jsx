@@ -48,11 +48,26 @@ const Login = () => {
 
     } catch (err) {
       const status = err.response?.status;
-      const apiMessage = err.response?.data?.detail || err.response?.data?.erro;
+      
+      // Captura o corpo bruto do erro para análise de string
+      const responseData = err.response?.data;
+      const apiMessage = responseData ? JSON.stringify(responseData).toLowerCase() : '';
+      
+      // Captura o cabeçalho content-length se o Django/Nginx enviar
+      const contentLength = err.response?.headers?.['content-length'];
 
-      if (status === 403 || apiMessage?.includes("blocked") || apiMessage?.includes("tentativas")) {
+      // IDENTIFICAÇÃO DE LOCKOUT COMPLETA (Por Status, String ou Assinatura de Pacote de 79 bytes)
+      if (
+        status === 429 || 
+        status === 403 || 
+        apiMessage.includes("blocked") || 
+        apiMessage.includes("tentativas") || 
+        apiMessage.includes("locked") ||
+        apiMessage.includes("too many requests") ||
+        (status === 400 && (apiMessage.includes("axes") || contentLength === '79' || Object.keys(responseData || {}).length === 0))
+      ) {
         setIsLocked(true);
-        setError('ACESSO BLOQUEADO: 5 tentativas malsucedidas. Contate o Administrador (N02.4).');
+        setError('ACESSO BLOQUEADO: 5 tentativas malsucedidas. Contate o Administrador.');
       } else {
         setError('Credenciais incorretas ou operador não identificado.');
       }
@@ -176,7 +191,7 @@ const LoginStyle = ({assets, isLocked}) => (
     .logoIcon {
         background: linear-gradient(135deg, rgba(0,240,97,0.2), transparent);
         padding: 12px;
-        border-radius: 50% !important; /* Fix: Garante que o ícone seja circular */
+        border-radius: 50% !important;
         border: 1px solid rgba(0,240,97,0.2);
         display: flex;
         align-items: center;
