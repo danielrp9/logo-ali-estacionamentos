@@ -28,9 +28,12 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    if (isLocked) return;
     setError('');
-    setIsLocked(false);
     
+    // Marca o carimbo de data/hora do início exato da requisição
+    const startTime = Date.now();
+
     try {
       const response = await axios.post('/api/login/', {
         username,
@@ -49,26 +52,18 @@ const Login = () => {
     } catch (err) {
       const status = err.response?.status;
       
-      // Captura o corpo bruto do erro para análise de string
-      const responseData = err.response?.data;
-      const apiMessage = responseData ? JSON.stringify(responseData).toLowerCase() : '';
-      
-      // Captura o cabeçalho content-length se o Django/Nginx enviar
-      const contentLength = err.response?.headers?.['content-length'];
+      // Calcula quanto tempo o servidor demorou para responder o erro (Assinatura de Performance)
+      const duration = Date.now() - startTime;
 
-      // IDENTIFICAÇÃO DE LOCKOUT COMPLETA (Por Status, String ou Assinatura de Pacote de 79 bytes)
-      if (
-        status === 429 || 
-        status === 403 || 
-        apiMessage.includes("blocked") || 
-        apiMessage.includes("tentativas") || 
-        apiMessage.includes("locked") ||
-        apiMessage.includes("too many requests") ||
-        (status === 400 && (apiMessage.includes("axes") || contentLength === '79' || Object.keys(responseData || {}).length === 0))
-      ) {
+      // SELETOR CRÍTICO: Se o status for 429/403 ou se o erro 400 voltou em tempo recorde (rejeição de portaria)
+      // Significa que o Axes barrou antes de processar o hash da senha de forma ordinária.
+      const isAxesLockout = status === 429 || status === 403 || (status === 400 && duration < 150);
+
+      if (isAxesLockout) {
         setIsLocked(true);
-        setError('ACESSO BLOQUEADO: 5 tentativas malsucedidas. Contate o Administrador.');
+        setError('ACESSO BLOQUEADO: 5 tentativas malsucedidas. Contate o Administrador (N02.4).');
       } else {
+        setIsLocked(false); // Mantém a tela destrancada para as tentativas legítimas restantes
         setError('Credenciais incorretas ou operador não identificado.');
       }
     }

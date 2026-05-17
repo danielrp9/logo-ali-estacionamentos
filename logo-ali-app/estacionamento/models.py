@@ -27,10 +27,17 @@ class Usuario(AbstractUser):
     REQUIRED_FIELDS = ['nome_completo', 'email', 'cpf']
 
     def save(self, *args, **kwargs):
+        # GANTE QUE O SUPERADMIN DO TERMINAL JÁ NASÇA COM O TIPO ADMINISTRADOR ATIVO
+        if self.is_superuser:
+            self.tipo_usuario = self.ADMIN
+            self.is_staff = True
+
+        # AJUSTA AS FLAGS NATIVAS COM BASE NO TIPO SELECIONADO MANUALMENTE PARA OUTROS USUÁRIOS
         if self.tipo_usuario in [self.FUNCIONARIO, self.ADMIN]:
             self.is_staff = True
         if self.tipo_usuario == self.ADMIN:
             self.is_superuser = True
+            
         super().save(*args, **kwargs)
 
     class Meta:
