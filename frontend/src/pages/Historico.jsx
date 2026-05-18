@@ -103,7 +103,7 @@ const Historico = () => {
                                 <tr style={{...styles.thRow, backgroundColor: 'rgba(255,255,255,0.01)', borderBottom: `1px solid ${assets.borderColor}`}}>
                                     <th style={{...styles.th, color: assets.textMuted}}>VEÍCULO</th>
                                     <th style={{...styles.th, color: assets.textMuted}}>ENTRADA / SAÍDA</th>
-                                    <th style={{...styles.th, color: assets.textMuted}} className="hideOnMobile">RESPONSÁVEL</th>
+                                    <th style={{...styles.th, color: assets.textMuted}} className="hideOnMobile">PROPRIETÁRIO</th>
                                     <th style={{...styles.th, color: assets.textMuted}}>STATUS</th>
                                 </tr>
                             </thead>

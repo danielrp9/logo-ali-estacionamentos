@@ -38,12 +38,12 @@ const Layout = ({ children }) => {
   const menuItems = [
     { label: 'Painel Geral', icon: <LayoutDashboard size={20} />, path: '/dashboard/' },
     { label: 'Novo Registro', icon: <PlusCircle size={20} />, path: '/adicionar/' },
-    { label: 'Audit. Histórico', icon: <History size={20} />, path: '/historico/' },
+    { label: 'Histórico', icon: <History size={20} />, path: '/historico/' },
   ];
 
   // Item exclusivo para Funcionário/Admin (Norma N01.4)
   if (tipoUsuario === 'FU' || tipoUsuario === 'AD') {
-    menuItems.push({ label: 'Diretório Clientes', icon: <Users size={20} />, path: '/clientes/' });
+    menuItems.push({ label: 'Clientes', icon: <Users size={20} />, path: '/clientes/' });
   }
 
   return (
