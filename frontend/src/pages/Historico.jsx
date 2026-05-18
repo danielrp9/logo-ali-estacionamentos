@@ -1,7 +1,7 @@
 /**
- * Logo Ali Estacionamentos - Histórico de Auditoria (Deep Earth Edition)
+ * Logo Ali Estacionamentos - Histórico de Auditoria (Liquid Glass Edition)
  * Author: Daniel Rodrigues Pereira | Year: 2026
- * Estética: Professional Audit / Deep Olive / Kinetic Tech
+ * Estética: Kinetic Glass / Professional Audit / Perimeter Hardening
  */
 import React, { useEffect, useState } from 'react';
 import api from '../api';
@@ -12,11 +12,10 @@ const Historico = () => {
     const [historico, setHistorico] = useState([]);
     const [busca, setBusca] = useState('');
 
-    const theme = {
-        structure: "#21261f",
-        background: "#111310",
-        border: "rgba(255, 255, 255, 0.08)",
-        accent: "#00b247"
+    const assets = {
+        accent: "#00f061", // Verde neon oficial
+        borderColor: "rgba(255, 255, 255, 0.06)",
+        textMuted: "rgba(255, 255, 255, 0.4)"
     };
 
     useEffect(() => {
@@ -38,105 +37,160 @@ const Historico = () => {
 
     return (
         <Layout>
-            <div style={styles.header}>
-                <div>
-                    <h2 style={styles.title}>Auditoria de Movimentação</h2>
-                    <p style={styles.subtitle}>Registro de fluxo</p>
-                </div>
-                
-                <div style={{...styles.searchBar, backgroundColor: theme.structure, border: `1px solid ${theme.border}`}}>
-                    <Search size={18} color="#4a5248" />
-                    <input 
-                        type="text" 
-                        placeholder="Buscar placa ou modelo..." 
-                        style={styles.searchInput}
-                        onChange={(e) => setBusca(e.target.value)}
-                    />
-                </div>
-            </div>
+            <div style={styles.pageContainer}>
+                <style>{`
+                    .auditGlassCard {
+                        background: rgba(255, 255, 255, 0.02) !important;
+                        backdrop-filter: blur(40px) !important;
+                        -webkit-backdrop-filter: blur(40px) !important;
+                        border: 1px solid ${assets.borderColor} !important;
+                    }
+                    .searchBarFocus {
+                        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+                    }
+                    .searchBarFocus:focus-within {
+                        border-color: ${assets.accent}44 !important;
+                        background-color: rgba(0,0,0,0.4) !important;
+                        box-shadow: 0 0 20px ${assets.accent}11 !important;
+                    }
+                    .searchBarFocus:focus-within svg {
+                        color: ${assets.accent} !important;
+                    }
+                    .tableRowHover {
+                        transition: background-color 0.2s ease !important;
+                    }
+                    .tableRowHover:hover {
+                        background-color: rgba(255, 255, 255, 0.01) !important;
+                    }
+                    @media (max-width: 768px) {
+                        .auditHeaderSection {
+                            flex-direction: column !important;
+                            align-items: flex-start !important;
+                            gap: 1.5rem !important;
+                        }
+                        .searchBarFocus {
+                            max-width: 100% !important;
+                        }
+                        .hideOnMobile {
+                            display: none !important;
+                        }
+                    }
+                `}</style>
 
-            <div style={{...styles.tableContainer, backgroundColor: theme.structure, border: `1px solid ${theme.border}`}}>
-                <table style={styles.table}>
-                    <thead>
-                        <tr style={{...styles.thRow, backgroundColor: 'rgba(0,0,0,0.2)'}}>
-                            <th style={styles.th}>VEÍCULO</th>
-                            <th style={styles.th}>ENTRADA / SAÍDA</th>
-                            <th style={styles.th}>RESPONSÁVEL</th>
-                            <th style={styles.th}>STATUS</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {filtrados.map(v => (
-                            <tr key={v.id} style={{...styles.tr, borderBottom: `1px solid ${theme.border}`}}>
-                                <td style={styles.td}>
-                                    <div style={styles.plate}>{v.placa}</div>
-                                    <div style={styles.model}>{v.modelo}</div>
-                                </td>
-                                <td style={styles.td}>
-                                    <div style={styles.timeInfo}>
-                                        <Calendar size={12} color={theme.accent} />
-                                        <strong>ENTRADA:</strong> {new Date(v.horario_entrada).toLocaleString()}
-                                    </div>
-                                    {v.horario_saida && (
-                                        <div style={{...styles.timeInfo, marginTop: '6px', color: theme.accent}}>
-                                            <CheckCircle2 size={12} />
-                                            <strong>SAÍDA:</strong> {new Date(v.horario_saida).toLocaleString()}
-                                        </div>
-                                    )}
-                                </td>
-                                <td style={styles.td}>
-                                    <div style={styles.userInfo}>
-                                        <div style={{...styles.userIconBox, backgroundColor: theme.background, border: `1px solid ${theme.border}`}}>
-                                            <User size={14} color={theme.accent} />
-                                        </div>
-                                        <span>{v.usuario_detalhes?.username || 'Sistema'}</span>
-                                    </div>
-                                </td>
-                                <td style={styles.td}>
-                                    <span style={{
-                                        ...styles.status, 
-                                        backgroundColor: v.horario_saida ? 'rgba(0,0,0,0.3)' : 'rgba(0,178,71,0.1)',
-                                        color: v.horario_saida ? '#8d948a' : theme.accent,
-                                        border: `1px solid ${v.horario_saida ? theme.border : theme.accent}`
-                                    }}>
-                                        {v.horario_saida ? 'FINALIZADO' : 'EM PÁTIO'}
-                                    </span>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-
-                {filtrados.length === 0 && (
-                    <div style={styles.emptyState}>
-                        <Activity size={40} color={theme.border} />
-                        <p style={{color: '#4a5248', fontWeight: '800'}}>NENHUM REGISTRO LOCALIZADO</p>
+                {/* CABEÇALHO DA TELA */}
+                <div style={styles.header} className="auditHeaderSection">
+                    <div>
+                        <h2 style={styles.title}>Histórico de Estacionamento</h2>
+                        <p style={{...styles.subtitle, color: assets.textMuted}}>Registro de Estacionamento</p>
                     </div>
-                )}
+                    
+                    <div style={styles.searchBar} className="auditGlassCard searchBarFocus">
+                        <Search size={16} color="rgba(255,255,255,0.2)" style={{ transition: 'color 0.25s ease' }} />
+                        <input 
+                            type="text" 
+                            placeholder="Buscar placa ou modelo..." 
+                            style={styles.searchInput}
+                            onChange={(e) => setBusca(e.target.value)}
+                        />
+                    </div>
+                </div>
+
+                {/* CONTÊINER DA TABELA */}
+                <div style={styles.tableContainer} className="auditGlassCard">
+                    <div style={{ overflowX: 'auto' }}>
+                        <table style={styles.table}>
+                            <thead>
+                                <tr style={{...styles.thRow, backgroundColor: 'rgba(255,255,255,0.01)', borderBottom: `1px solid ${assets.borderColor}`}}>
+                                    <th style={{...styles.th, color: assets.textMuted}}>VEÍCULO</th>
+                                    <th style={{...styles.th, color: assets.textMuted}}>ENTRADA / SAÍDA</th>
+                                    <th style={{...styles.th, color: assets.textMuted}} className="hideOnMobile">RESPONSÁVEL</th>
+                                    <th style={{...styles.th, color: assets.textMuted}}>STATUS</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {filtrados.map(v => (
+                                    <tr key={v.id} style={{...styles.tr, borderBottom: `1px solid ${assets.borderColor}`}} className="tableRowHover">
+                                        <td style={styles.td}>
+                                            <div style={styles.plate}>{v.placa}</div>
+                                            <div style={{...styles.model, color: assets.textMuted}}>{v.modelo}</div>
+                                        </td>
+                                        <td style={styles.td}>
+                                            <div style={styles.timeInfo}>
+                                                <Calendar size={12} color={assets.accent} style={{ opacity: 0.7 }} />
+                                                <span style={{ color: 'rgba(255,255,255,0.7)' }}>
+                                                    <strong style={{ fontSize: '0.7rem', opacity: 0.5, marginRight: '4px' }}>ENTRADA:</strong> 
+                                                    {new Date(v.horario_entrada).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}
+                                                </span>
+                                            </div>
+                                            {v.horario_saida && (
+                                                <div style={{...styles.timeInfo, marginTop: '8px'}}>
+                                                    <CheckCircle2 size={12} color={assets.accent} style={{ filter: `drop-shadow(0 0 4px ${assets.accent}44)` }} />
+                                                    <span style={{ color: assets.accent }}>
+                                                        <strong style={{ fontSize: '0.7rem', opacity: 0.6, marginRight: '4px' }}>SAÍDA:</strong> 
+                                                        {new Date(v.horario_saida).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}
+                                                    </span>
+                                                </div>
+                                            )}
+                                        </td>
+                                        <td style={styles.td} className="hideOnMobile">
+                                            <div style={styles.userInfo}>
+                                                <div style={{...styles.userIconBox, backgroundColor: 'rgba(0,0,0,0.15)', border: `1px solid ${assets.borderColor}`}}>
+                                                    <User size={13} color={assets.accent} />
+                                                </div>
+                                                <span>{v.usuario_detalhes?.username || 'Sistema'}</span>
+                                            </div>
+                                        </td>
+                                        <td style={styles.td}>
+                                            <span style={{
+                                                ...styles.status, 
+                                                backgroundColor: v.horario_saida ? 'rgba(255,255,255,0.02)' : 'rgba(0,240,97,0.03)',
+                                                color: v.horario_saida ? 'rgba(255,255,255,0.4)' : assets.accent,
+                                                borderColor: v.horario_saida ? assets.borderColor : 'rgba(0,240,97,0.15)'
+                                            }}>
+                                                {v.horario_saida ? 'FINALIZADO' : 'EM PÁTIO'}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {/* CONTROLADOR DE ESTADO VAZIO */}
+                    {filtrados.length === 0 && (
+                        <div style={styles.emptyState}>
+                            <div style={{ backgroundColor: 'rgba(255,255,255,0.01)', border: `1px solid ${assets.borderColor}`, padding: '16px', borderRadius: '50%', marginBottom: '4px' }}>
+                                <Activity size={32} color="rgba(255,255,255,0.1)" />
+                            </div>
+                            <p style={{color: assets.textMuted, fontWeight: '800', fontSize: '0.75rem', letterSpacing: '1px'}}>NENHUM REGISTRO LOCALIZADO</p>
+                        </div>
+                    )}
+                </div>
             </div>
         </Layout>
     );
 };
 
 const styles = {
-    header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3rem', flexWrap: 'wrap', gap: '1.5rem' },
-    title: { fontSize: '1.8rem', fontWeight: '900', color: '#fff', letterSpacing: '-1.5px', margin: 0 },
-    subtitle: { fontSize: '0.8rem', color: '#8d948a', marginTop: '6px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '1px' },
-    searchBar: { display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 25px', borderRadius: '18px', width: '100%', maxWidth: '380px', boxShadow: '0 10px 30px rgba(0,0,0,0.2)' },
-    searchInput: { border: 'none', background: 'none', outline: 'none', width: '100%', fontSize: '0.95rem', fontWeight: '700', color: '#fff' },
-    tableContainer: { borderRadius: '35px', overflow: 'hidden', boxShadow: '0 30px 60px rgba(0,0,0,0.4)' },
-    table: { width: '100%', borderCollapse: 'collapse', textAlign: 'left' },
-    thRow: { borderBottom: '1px solid rgba(255,255,255,0.05)' },
-    th: { padding: '22px', color: '#4a5248', fontSize: '0.7rem', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '1.5px' },
-    tr: { transition: '0.2s' },
-    td: { padding: '22px' },
-    plate: { fontWeight: '900', color: '#fff', fontSize: '1.1rem', letterSpacing: '1px' },
-    model: { fontSize: '0.75rem', color: '#8d948a', fontWeight: '800', textTransform: 'uppercase', marginTop: '4px' },
-    timeInfo: { display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem', color: '#ccc', fontWeight: '600' },
-    userInfo: { display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.9rem', color: '#fff', fontWeight: '800' },
-    userIconBox: { padding: '8px', borderRadius: '12px', display: 'flex' },
-    status: { padding: '8px 16px', borderRadius: '12px', fontSize: '0.65rem', fontWeight: '900', letterSpacing: '1px', display: 'inline-block' },
-    emptyState: { textAlign: 'center', padding: '6rem 0', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '15px' }
+    pageContainer: { width: '100%', boxSizing: 'border-box' },
+    header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem', gap: '20px' },
+    title: { fontSize: '1.4rem', fontWeight: '900', color: '#fff', letterSpacing: '-0.3px', margin: 0, textTransform: 'uppercase' },
+    subtitle: { fontSize: '0.75rem', marginTop: '4px', fontWeight: '600', letterSpacing: '0.5px' },
+    searchBar: { display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 20px', borderRadius: '14px', width: '100%', maxWidth: '360px', boxSizing: 'border-box', backgroundColor: 'rgba(0,0,0,0.1)' },
+    searchInput: { border: 'none', background: 'none', outline: 'none', width: '100%', fontSize: '0.85rem', fontWeight: '600', color: '#fff' },
+    tableContainer: { borderRadius: '24px', overflow: 'hidden' },
+    table: { width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.9rem' },
+    thRow: {  },
+    th: { padding: '18px 22px', fontSize: '0.65rem', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '1.5px' },
+    tr: { },
+    td: { padding: '20px 22px', verticalAlign: 'middle' },
+    plate: { fontWeight: '900', color: '#fff', fontSize: '1.05rem', letterSpacing: '0.5px' },
+    model: { fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', marginTop: '2px', letterSpacing: '0.3px' },
+    timeInfo: { display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem' },
+    userInfo: { display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.85rem', color: '#fff', fontWeight: '700' },
+    userIconBox: { padding: '6px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' },
+    status: { padding: '6px 14px', borderRadius: '100px', fontSize: '0.65rem', fontWeight: '900', letterSpacing: '0.5px', display: 'inline-block', border: '1px solid' },
+    emptyState: { textAlign: 'center', padding: '5rem 0', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }
 };
 
 export default Historico;

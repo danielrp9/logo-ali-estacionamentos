@@ -13,9 +13,7 @@ ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost,0.0.0.0").split(
 
 AUTH_USER_MODEL = 'estacionamento.Usuario'
 
-# ==============================================================================
-# CONFIGURAÇÕES DE SEGURANÇA PARA PROXY (NGINX + HTTPS) 
-# ==============================================================================
+
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SESSION_COOKIE_SECURE = False
 CSRF_COOKIE_SECURE = False
@@ -28,7 +26,7 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = 'DENY'
 SECURE_REFERRER_POLICY = "same-origin"
 
-# GESTÃO DE SESSÃO (TIME-OUT N01.6)
+
 SESSION_COOKIE_AGE = 900 
 SESSION_SAVE_EVERY_REQUEST = True  
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True 
@@ -58,7 +56,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'axes.middleware.AxesMiddleware', 
-    # Portaria de Segurança Seletiva (Executada estrategicamente após a sessão/auth)
     'estacionamento.middleware.ProtocolEnforcerMiddleware',
 ]
 
@@ -67,16 +64,16 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
-# CONFIGURAÇÃO AXES (AUDITORIA DE ACESSO BRUTO)
+
 AXES_FAILURE_LIMIT = 5            
 AXES_LOCK_OUT_AT_FAILURE = True   
 AXES_LOCKOUT_PARAMETERS = ['username', 'ip_address']
 AXES_RESET_ON_SUCCESS = True     
 AXES_ENABLE_ADMIN = True  
 
-# ==============================================================================
-# LOGGING (AUDITORIA DE TERMINAL SCANNÁVEL E COLORIDA)
-# ==============================================================================
+# ====================
+# LOGGING (AUDITORIA )
+# ====================
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
