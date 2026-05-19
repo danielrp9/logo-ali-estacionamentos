@@ -1,6 +1,6 @@
-# Logo Ali Estacionamentos
+ .# Logo Ali Estacionamentos
 
-Sistema de **Gerenciamento Inteligente de Estacionamentos** desenvolvido como um ecossistema **Full-Stack (Django + React)** para a disciplina de **Segurança e Auditoria de Sistemas de Informação - SASI**.
+Sistema de **Gerenciamento Inteligente de Estacionamentos** desenvolvido como um ecossistema **Full-Stack (Django + React)** para a disciplina de **Segurança e Auditoria de Sistemas de Informação - SASI** na **Universidade Federal dos Vales do Jequitinhonha e Mucuri (UFVJM)**.
 
 O **Logo Ali** oferece controle de pátio em tempo real, auditoria de movimentação, integração com pagamentos via **Stripe** e segurança de tráfego baseada em **SSL Dual-Protocol**.
 
@@ -10,7 +10,9 @@ O **Logo Ali** oferece controle de pátio em tempo real, auditoria de movimenta�
 
 O sistema utiliza uma arquitetura híbrida onde o **Nginx** atua como Proxy Reverso para gerenciamento de criptografia, enquanto o **Django** processa a lógica de negócios e serve o build do **React**.
 
+
 ```
+
 logo-ali-project/
 │
 ├── logo-ali-app/        # Servidor Backend (Django) + Static Files
@@ -32,6 +34,7 @@ logo-ali-project/
 * **Node.js 18+** e **npm**
 * **Nginx** (Essencial para a infraestrutura de segurança)
 * **Git**
+* **OpenSSL** (Para auditoria ou regeneração de chaves)
 
 ---
 
@@ -40,7 +43,7 @@ logo-ali-project/
 ### 1. Clonar o Repositório
 
 ```bash
-git clone https://github.com/danielrp9/logo-ali.git
+git clone [https://github.com/danielrp9/logo-ali.git](https://github.com/danielrp9/logo-ali.git)
 cd logo-ali-project
 
 ```
@@ -55,32 +58,114 @@ pip install -r requirements.txt
 
 ```
 
-### 3. Configuração de Segurança SSL (Norma N08.6 PSI)
+### 3. Instalação e Ativação do Servidor Nginx
 
-Para que a funcionalidade de HTTPS e o redirecionamento automático operem corretamente, é vital a padronização dos certificados.
+Antes de configurar as rotas seguras, garanta que o servidor web esteja presente e operacional no seu sistema operacional Linux (Ubuntu/Debian) utilizando o gerenciador de pacotes `apt`:
 
-**Nota de Padronização:** O arquiteto do sistema deve compartilhar os arquivos de certificados (`server.crt` e `server.key`) para que todos os membros utilizem as mesmas credenciais SSL em modo de desenvolvimento.
+```bash
+sudo apt update
+sudo apt install nginx
 
-**A. Preparar Diretório de Certificados:**
+```
+
+Para confirmar se o serviço está ativo e ouvindo as requisições de rede, execute:
+
+```bash
+sudo systemctl status nginx
+
+```
+
+---
+
+# 🔐 Infraestrutura de Chaves Públicas e Criptografia (OpenSSL)
+
+Para fins de auditoria acadêmica, o projeto possui suporte completo à geração e validação de criptografia assimétrica baseada no algoritmo RSA de 2048 bits.
+
+### Geração Original dos Ativos de Segurança (Para conhecimento)
+
+O processo documentado na arquitetura original utiliza três comandos essenciais executados dentro do diretório `/home/daniel-rodrigues/Área de trabalho/logo-ali-project/certs`:
+
+1. **Geração da Chave Privada (Private Key):** Componente que criptografa os dados no servidor.
+```bash
+openssl genrsa -out server.key 2048
+
+```
+
+
+2. **Geração do Pedido de Assinatura (CSR):** Vinculação da identidade digital à Logo Ali Estacionamentos com os metadados (`BR`, `Minas Gerais`, `Diamantina`, `Logo Ali Estacionamentos`, `Desenvolvimento`, `localhost`).
+```bash
+openssl req -new -key server.key -out server.csr
+
+```
+
+
+3. **Emissão do Certificado Autoassinado (X.509):** Chave pública assinada com validade de 365 dias.
+```bash
+openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt
+
+```
+
+
+
+### ⚠️ Nota de Padronização para Auditoria Cruzada
+
+Para garantir que não ocorram erros de sincronismo, incompatibilidade de chaves ou inconsistências durante a avaliação do sistema, **os arquivos originais de certificados (`server.crt` e `server.key`) serão enviados separadamente pelo arquiteto do sistema**.
+
+Eles devem ser obrigatoriamente inseridos na pasta raiz de certificados localizada em:
+`/home/daniel-rodrigues/Área de trabalho/logo-ali-project/certs`
+
+A estrutura interna esperada pelo ambiente de segurança para esta pasta consiste em:
+
+* `/home/daniel-rodrigues/Área de trabalho/logo-ali-project/certs/logoali.conf`
+* `/home/daniel-rodrigues/Área de trabalho/logo-ali-project/certs/server.crt`
+* `/home/daniel-rodrigues/Área de trabalho/logo-ali-project/certs/server.csr`
+* `/home/daniel-rodrigues/Área de trabalho/logo-ali-project/certs/server.key`
+
+---
+
+### 4. Configuração e Ativação do Modo Dual-Protocol no Nginx
+
+Com os arquivos de certificados devidamente posicionados e compartilhados na pasta raiz do projeto, proceda com a migração e acoplamento dos arquivos de configuração para os diretórios universais do sistema operacional.
+
+**A. Preparar Diretório Universal de Certificados:**
 
 ```bash
 sudo mkdir -p /etc/nginx/logoali-certs/
-# Copie os arquivos compartilhados pelo arquiteto para a pasta universal
-sudo cp ../certs/server.crt /etc/nginx/logoali-certs/
-sudo cp ../certs/server.key /etc/nginx/logoali-certs/
+# Copie os arquivos compartilhados para a pasta universal do Nginx
+sudo cp /home/daniel-rodrigues/Área\ de\ trabalho/logo-ali-project/certs/server.crt /etc/nginx/logoali-certs/
+sudo cp /home/daniel-rodrigues/Área\ de\ trabalho/logo-ali-project/certs/server.key /etc/nginx/logoali-certs/
 
 ```
 
-**B. Configurar Nginx:**
+**B. Migração e Ativação do Arquivo de Configuração do Nginx:**
+Copie o arquivo de mapeamento de portas (`logoali.conf`) para o diretório de sites disponíveis do Nginx e crie o link simbólico para ativação:
 
 ```bash
-sudo cp ../logoali.conf /etc/nginx/sites-available/
+sudo cp /home/daniel-rodrigues/Área\ de\ trabalho/logo-ali-project/certs/logoali.conf /etc/nginx/sites-available/
 sudo ln -s /etc/nginx/sites-available/logoali.conf /etc/nginx/sites-enabled/
-sudo nginx -t && sudo systemctl restart nginx
 
 ```
 
-### 4. Configuração do Stripe
+**C. Validação da Sintaxe do Servidor e Reinicialização:**
+Execute o teste de integridade para certificar que o Nginx reconheceu com sucesso os caminhos dos certificados e as diretivas de porta:
+
+```bash
+sudo nginx -t
+
+```
+
+*O retorno esperado no terminal deve obrigatoriamente indicar: `syntax is ok` e `test is successful`.*
+
+Se a sintaxe estiver correta, reinicie o serviço do Nginx para aplicar as regras de isolamento de tráfego:
+
+```bash
+sudo systemctl restart nginx
+
+```
+
+---
+
+### 5. Configuração do Stripe
 
 Como o sistema utiliza o Stripe para o fluxo de checkout, é necessário gerar uma chave de teste:
 
@@ -89,7 +174,7 @@ Como o sistema utiliza o Stripe para o fluxo de checkout, é necessário gerar u
 3. Vá em **Developers > API Keys**.
 4. Copie a **Publishable key** (começa com `pk_test_`) e a **Secret key** (começa com `sk_test_`).
 
-### 5. Configuração do Arquivo `.env`
+### 6. Configuração do Arquivo `.env`
 
 Crie um arquivo `.env` dentro da pasta `logo-ali-app/`.
 
@@ -111,7 +196,7 @@ STRIPE_SECRET_KEY=sk_test_COLE_AQUI_SUA_CHAVE_PRIVADA
 
 ```
 
-### 6. Banco de Dados e Build
+### 7. Banco de Dados e Build
 
 ```bash
 python manage.py migrate
@@ -126,7 +211,7 @@ npm install && npm run build
 
 # Execução do Sistema
 
-Com o ambiente virtual ativado na pasta `logo-ali-app`, inicie o servidor:
+Com o ambiente virtual ativado na pasta `logo-ali-app`, inicie o servidor backend:
 
 ```bash
 python manage.py runserver
@@ -135,8 +220,8 @@ python manage.py runserver
 
 **Acesso via Proxy Seguro (Nginx):**
 
-* **Navegação Comum:** [http://localhost](https://www.google.com/search?q=http://localhost) (Porta 80)
-* **Navegação Sensível:** O sistema redirecionará automaticamente para [https://localhost](https://www.google.com/search?q=https://localhost) (Porta 443) ao acessar rotas de Login ou Cadastro.
+* **Navegação Comum:** http://localhost (Porta 80)
+* **Navegação Sensível:** O sistema redirecionará automaticamente para https://localhost (Porta 443) ao acessar rotas de Login ou Cadastro.
 
 > **Nota para Testes de Pagamento:** Utilize os números de [cartões de teste oficiais do Stripe](https://docs.stripe.com/testing) (Ex: `4242 4242 4242 4242`).
 
@@ -144,14 +229,39 @@ python manage.py runserver
 
 # Funcionalidades para Análise de Auditoria
 
-* **ProtocolEnforcerMiddleware**: "Portaria" de segurança que gerencia a transição HTTP/HTTPS no nível da aplicação.
-* **Dual-Block Nginx**: Separação física de portas para tráfego público e tráfego encriptado.
-* **HSTS & Hard Redirects**: Garantia de que o navegador mantenha a integridade do protocolo seguro.
-* **QR Code Dinâmico**: Geração de tokens de acesso vinculados à confirmação de pagamento via Stripe.
+Durante o processo de auditoria cruzada, o grupo avaliador deve focar a análise nos seguintes mecanismos de segurança implementados:
+
+* **ProtocolEnforcerMiddleware**: Localizado em `estacionamento/middleware.py`. É a "Portaria" de segurança que gerencia em nível de aplicação a transição dinâmica HTTP/HTTPS. Ele inspeciona a requisição e valida se o endpoint acessado coincide com o array de rotas protegidas:
+`secure_routes = ['login', 'cadastro', 'admin', 'clientes', 'veiculo', 'pagamento', 'dashboard', 'historico', 'adicionar']`
+Caso o acesso seja feito via HTTP comum nestas rotas, o middleware bloqueia a execução da View e emite um `HttpResponseRedirect` forçando a elevação do canal para HTTPS.
+* **Dual-Block Nginx**: Configuração contida em `logoali.conf` que efetua a separação física de escuta em portas de rede, tratando o tráfego comum (Porta 80) e o tráfego encriptado (Porta 443) com terminação SSL dedicada e cifras criptográficas de alto nível (`HIGH:!aNULL:!MD5`).
+* **HSTS & Hard Redirects**: Injeção de cabeçalhos de controle restritos (`Strict-Transport-Security`, `Cache-Control="no-store, no-cache"`, `Pragma="no-cache"`) para mitigar ataques de personificação ou reaproveitamento de sessões em cache local.
+* **QR Code Dinâmico**: Geração de tokens de acesso únicos na portaria vinculados diretamente ao sucesso da confirmação de webhook do pagamento via Stripe.
+
+---
+
+# Monitoramento de Logs em Tempo Real
+
+Para validar se o ecossistema está operando corretamente em modo seguro, monitore o terminal de execução do Django. O sucesso do "salto" físico de protocolo é evidenciado pela sequência de logs emitidos pela classe de controle:
+
+```
+[AUDITORIA] 2026-05-15 18:54:30,805 | INFO | "GET /login/ HTTP/1.0" 302 0
+PORTARIA -> Path: /login/ | HTTPS: False | X-Forwarded-Proto: http | Needs HTTPS: True
+
+[AUDITORIA] 2026-05-15 18:54:49,416 | INFO | "GET /login/ HTTP/1.0" 200 559
+PORTARIA -> Path: /login/ | HTTPS: True | X-Forwarded-Proto: https | Needs HTTPS: True
+
+```
+
+*Nota: O código de status HTTP 302 (Redirecionamento temporário) seguido do código 200 (OK) já trafegando sob a flag `HTTPS: True` atesta a eficácia operacional do barramento.*
 
 ---
 
 # Autor
 
 **Daniel Rodrigues Pereira**
-Acadêmico de **Sistemas de Informação** — **UFVJM (Diamantina, MG)**.
+Acadêmico de **Sistemas de Informação**.
+
+```
+
+```
