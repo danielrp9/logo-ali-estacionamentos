@@ -50,11 +50,16 @@ logo-ali-project/
 
 # Requisitos para Execução
 
-* **Python 3.10+**
-* **Node.js 18+** e **npm**
-* **Nginx** (Essencial para a infraestrutura de segurança)
-* **Git**
-* **OpenSSL** (Para auditoria ou regeneração de chaves)
+Para que o grupo de auditoria consiga rodar, compilar e auditar o ecossistema localmente, a máquina de testes precisará dos seguintes componentes instalados:
+
+### Ambiente Backend e Servidor
+* **Python 3.10+**: Necessário para rodar o core do sistema em Django e gerenciar o ambiente virtual (`venv`).
+* **Nginx**: Requisito de infraestrutura. Essencial para gerenciar os blocos de escuta das portas 80 e 443 e realizar a terminação TLS local.
+* **OpenSSL**: Utilizado para a validação, leitura ou eventual regeneração da estrutura de chaves assimétricas e certificados X.509.
+
+### Ambiente Frontend e Ferramentas
+* **Node.js 18+ e npm**: Requisitos obrigatórios no ambiente de desenvolvimento. Necessários para baixar as dependências do ecossistema React (`npm install`) e executar o motor de compilação do Vite (`npm run build`) que gera os arquivos estáticos para o servidor.
+* **Git**: Para clonagem do repositório e rastreamento do histórico de alterações.
 
 ---
 
@@ -136,10 +141,10 @@ Eles devem ser obrigatoriamente inseridos na pasta raiz de certificados localiza
 
 A estrutura interna esperada pelo ambiente de segurança para esta pasta consiste em:
 
-* `/home/daniel-rodrigues/Área de trabalho/logo-ali-project/certs/logoali.conf`
-* `/home/daniel-rodrigues/Área de trabalho/logo-ali-project/certs/server.crt`
-* `/home/daniel-rodrigues/Área de trabalho/logo-ali-project/certs/server.csr`
-* `/home/daniel-rodrigues/Área de trabalho/logo-ali-project/certs/server.key`
+* `certs/logoali.conf`
+* `certs/server.crt`
+* `certs/server.csr`
+* `certs/server.key`
 
 ---
 
