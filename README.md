@@ -110,7 +110,7 @@ Para fins de auditoria acadêmica, o projeto possui suporte completo à geraçã
 
 ### Geração Original dos Ativos de Segurança (Para conhecimento)
 
-O processo documentado na arquitetura original utiliza três comandos essenciais executados dentro do diretório `/home/daniel-rodrigues/Área de trabalho/logo-ali-project/certs`:
+O processo documentado na arquitetura original utiliza três comandos essenciais executados dentro do diretório `logo-ali-project/certs`:
 
 1. **Geração da Chave Privada (Private Key):** Componente que criptografa os dados no servidor.
 ```bash
@@ -139,7 +139,7 @@ openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt
 Para garantir que não ocorram erros de sincronismo, incompatibilidade de chaves ou inconsistências durante a avaliação do sistema, **os arquivos originais de certificados (`server.crt` e `server.key`) serão enviados separadamente pelo arquiteto do sistema**.
 
 Eles devem ser obrigatoriamente inseridos na pasta raiz de certificados localizada em:
-`/home/daniel-rodrigues/Área de trabalho/logo-ali-project/certs`
+`logo-ali-project/certs`
 
 A estrutura interna esperada pelo ambiente de segurança para esta pasta consiste em:
 
