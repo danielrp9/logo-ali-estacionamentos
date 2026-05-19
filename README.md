@@ -23,24 +23,6 @@ Para viabilizar a alternância de protocolos em ambiente de desenvolvimento offl
 
 O **Nginx** foi configurado na frente da aplicação para atuar como proxy reverso e terminador TLS. Ele gerencia os blocos de escuta diretamente nas portas 80 (HTTP) e 443 (HTTPS), processa a criptografia na borda e repassa as requisições limpas internamente para o servidor do Django (porta 8000). Essa topologia local replica de forma realista o comportamento de uma Autoridade Certificadora (CA).**.
 
----
-
-## 🎯 Foco Central do Trabalho e Alinhamento com a PSI
-
-O sistema foi inteiramente projetado para atender ao desafio de engenharia de software e infraestrutura deestipulado no comando da disciplina, estruturando-se através dos seguintes parâmetros:
-
-### 1. Modelo de Negócio e Política de Segurança (Origem: TPI_SASI)
-A aplicação reflete as operações e regras de controle da empresa de estacionamento estabelecida no primeiro trabalho prático (**TPI I**). O sistema disponibiliza uma **Página Social pública (em HTTP padrão)** que apresenta formalmente a empresa e a sua **Política de Segurança da Informação (PSI)**. Esta interface institucional serve como portal de entrada e direciona de forma segura os operadores para a tela de autenticação.
-
-### 2. Arquitetura Dual-Protocol (Otimização Dinâmica de Performance)
-Em cumprimento à exigência restrita de projeto — onde a aplicação global de criptografia acarretaria na perda de 60% da nota devido ao desperdício de processamento —, o ecossistema opera nativamente em modo **Dual-Protocol**:
-* **Canais em HTTP Puro:** Mantidos na página social e na exibição da política de segurança, mitigando o overhead de processamento de criptografia (*Handshake SSL/TLS*) in interfaces informativas que não coletam dados sigilosos.
-* **Canais em HTTPS Seguro:** Ativados de forma cirúrgica e obrigatória estritamente nas rotas que executam entrada ou manipulação de dados sensíveis (módulos de `login`, `cadastro`, `admin`, `clientes`, registros de `veiculo`, fluxos de `pagamento` integrados ao **Stripe**, monitoramento de `dashboard` e `historico`).
-
-### 3. Infraestrutura de Chaves Públicas e Preparação para Auditoria (TPIV_SASI)
-A segurança na camada de transporte (Transport Layer Security) foi estruturada de forma inteiramente offline, empregando a ferramenta **OpenSSL** para a criação de uma Infraestrutura de Chaves Públicas local. Foram geradas chaves privadas RSA de 2048 bits, Pedidos de Assinatura de Certificado (CSR) personalizados para a identidade da *Logo Ali Estacionamentos*, e a subsequente emissão do Certificado Autoassinado X.509 de desenvolvimento. 
-
-Essa infraestrutura e sua integração com o servidor Proxy Reverso (Nginx) encontram-se documentadas detalhadamente para subsidiar e fornecer total autonomia ao grupo que conduzirá a **Auditoria Cruzada (TPI IV)**.
 
 ---
 
