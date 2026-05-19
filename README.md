@@ -131,9 +131,9 @@ Com os arquivos de certificados devidamente posicionados e compartilhados na pas
 
 ```bash
 sudo mkdir -p /etc/nginx/logoali-certs/
-# Copie os arquivos compartilhados para a pasta universal do Nginx
-sudo cp /home/daniel-rodrigues/Área\ de\ trabalho/logo-ali-project/certs/server.crt /etc/nginx/logoali-certs/
-sudo cp /home/daniel-rodrigues/Área\ de\ trabalho/logo-ali-project/certs/server.key /etc/nginx/logoali-certs/
+# Copie os arquivos compartilhados da pasta local para a pasta universal do Nginx
+sudo cp ./certs/server.crt /etc/nginx/logoali-certs/
+sudo cp ./certs/server.key /etc/nginx/logoali-certs/
 
 ```
 
@@ -141,7 +141,7 @@ sudo cp /home/daniel-rodrigues/Área\ de\ trabalho/logo-ali-project/certs/server
 Copie o arquivo de mapeamento de portas (`logoali.conf`) para o diretório de sites disponíveis do Nginx e crie o link simbólico para ativação:
 
 ```bash
-sudo cp /home/daniel-rodrigues/Área\ de\ trabalho/logo-ali-project/certs/logoali.conf /etc/nginx/sites-available/
+sudo cp ./certs/logoali.conf /etc/nginx/sites-available/
 sudo ln -s /etc/nginx/sites-available/logoali.conf /etc/nginx/sites-enabled/
 
 ```
@@ -223,7 +223,7 @@ python manage.py runserver
 * **Navegação Comum:** http://localhost (Porta 80)
 * **Navegação Sensível:** O sistema redirecionará automaticamente para https://localhost (Porta 443) ao acessar rotas de Login ou Cadastro.
 
-> **Nota para Testes de Pagamento:** Utilize os números de [cartões de teste oficiais do Stripe](https://docs.stripe.com/testing) (Ex: `4242 4242 4242 4242`).
+> **Nota para Testes de Pagamento:** Utilize os números de [cartões de teste oficiais do Stripe](https://docs.stripe.com/testing) (Ex.: `4242 4242 4242 4242`).
 
 ---
 
@@ -261,7 +261,3 @@ PORTARIA -> Path: /login/ | HTTPS: True | X-Forwarded-Proto: https | Needs HTTPS
 
 **Daniel Rodrigues Pereira**
 Acadêmico de **Sistemas de Informação**.
-
-```
-
-```
