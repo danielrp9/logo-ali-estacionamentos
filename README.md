@@ -68,9 +68,11 @@ Para que o grupo de auditoria consiga rodar, compilar e auditar o ecossistema lo
 ### 1. Clonar o Repositório
 
 ```bash
-git clone https://github.com/danielrp9/logo-ali-estacionamentos.git
-cd logo-ali-project
+### 1. Clonar o Repositório
 
+```bash
+git clone [https://github.com/danielrp9/logo-ali.git](https://github.com/danielrp9/logo-ali.git)
+cd logo-ali-project
 ```
 
 ### 2. Preparação do Backend (Django)
