@@ -4,7 +4,7 @@ O **Logo Ali** é um sistema para gerenciamento e automação de pátios de esta
 
 ---
 
-## 🎯 Tomadas de Decisão e Estratégia de Segurança
+## Tomadas de Decisão e Estratégia de Segurança
 
 O desenvolvimento do sistema foi guiado por decisões planejadas de engenharia de software e infraestrutura de segurança, buscando atender às restrições de desenvolvimento da ementa do projeto.
 
@@ -101,7 +101,7 @@ sudo systemctl status nginx
 
 ---
 
-# 🔐 Infraestrutura de Chaves Públicas e Criptografia (OpenSSL)
+# Infraestrutura de Chaves Públicas e Criptografia (OpenSSL)
 
 Para fins de auditoria acadêmica, o projeto possui suporte completo à geração e validação de criptografia assimétrica baseada no algoritmo RSA de 2048 bits.
 
@@ -131,7 +131,7 @@ openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt
 
 
 
-### ⚠️ Nota de Padronização para Auditoria Cruzada
+### Nota de Padronização para Auditoria Cruzada
 
 Para garantir que não ocorram erros de sincronismo, incompatibilidade de chaves ou inconsistências durante a avaliação do sistema, **os arquivos originais de certificados (`server.crt` e `server.key`) serão enviados separadamente pelo arquiteto do sistema**.
 
