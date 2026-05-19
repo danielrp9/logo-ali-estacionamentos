@@ -1,4 +1,4 @@
- .# Logo Ali Estacionamentos
+ # Logo Ali Estacionamentos
 
 Sistema de **Gerenciamento Inteligente de Estacionamentos** desenvolvido como um ecossistema **Full-Stack (Django + React)** para a disciplina de **Segurança e Auditoria de Sistemas de Informação - SASI** na **Universidade Federal dos Vales do Jequitinhonha e Mucuri (UFVJM)**.
 
