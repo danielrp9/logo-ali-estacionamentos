@@ -12,8 +12,9 @@ import {
 
 interface ApiError {
   detail?: string;
-  cpf?: string;
-  username?: string;
+  cpf?: string | string[];
+  username?: string | string[];
+  password?: string | string[];
 }
 
 const Cadastro: React.FC = () => {
@@ -47,6 +48,13 @@ const Cadastro: React.FC = () => {
     e.preventDefault();
     setError(null);
 
+    // Validação de formato básico de CPF antes de enviar à API
+    const cpfApenasNumeros = formData.cpf.replace(/\D/g, '');
+    if (cpfApenasNumeros.length !== 11) {
+      setError({ detail: 'Formato inválido: O CPF deve conter exatamente 11 dígitos numéricos.' });
+      return;
+    }
+
     if (formData.password !== formData.confirmPassword) {
       setError({ detail: 'As senhas não coincidem.' });
       return;
@@ -54,7 +62,7 @@ const Cadastro: React.FC = () => {
 
     try {
       await axios.post('/api/register/', {
-        cpf: formData.cpf,
+        cpf: cpfApenasNumeros, // Envia o CPF normalizado limpo
         username: formData.username,
         nome_completo: formData.nome_completo,
         email: formData.email,
@@ -70,6 +78,26 @@ const Cadastro: React.FC = () => {
     } catch (err: any) {
       setError(err.response?.data || { detail: 'Erro ao criar conta.' });
     }
+  };
+
+  // Função auxiliar para processar e extrair mensagens de erro textuais amigáveis
+  const renderErrorMessage = (): string => {
+    if (!error) return '';
+    if (error.detail) return error.detail;
+    
+    const mensagens: string[] = [];
+    
+    if (error.cpf) {
+      mensagens.push(`CPF: ${Array.isArray(error.cpf) ? error.cpf.join(' ') : error.cpf}`);
+    }
+    if (error.username) {
+      mensagens.push(`Usuário: ${Array.isArray(error.username) ? error.username.join(' ') : error.username}`);
+    }
+    if (error.password) {
+      mensagens.push(`Senha: ${Array.isArray(error.password) ? error.password.join(' ') : error.password}`);
+    }
+
+    return mensagens.length > 0 ? mensagens.join(' | ') : 'Falha na validação dos dados.';
   };
 
   return (
@@ -100,7 +128,7 @@ const Cadastro: React.FC = () => {
                 <label style={styles.label}>CPF (NUMÉRICOS)</label>
                 <div style={styles.inputWrapper}>
                   <Hash size={14} className="inputIcon" />
-                  <input name="cpf" maxLength={11} placeholder="00000000000" onChange={handleChange} style={styles.input} required />
+                  <input name="cpf" maxLength={14} placeholder="000.000.000-00" onChange={handleChange} style={styles.input} required />
                 </div>
               </div>
               <div className="input-field">
@@ -178,8 +206,8 @@ const Cadastro: React.FC = () => {
 
             {error && (
               <div style={styles.errorBox} className="shakeEffect">
-                 <AlertCircle size={14} />
-                 <span>{error.detail || error.cpf || error.username || "Falha na validação."}</span>
+                 <AlertCircle size={14} style={{ minWidth: '14px' }} />
+                 <span style={{ textAlign: 'left' }}>{renderErrorMessage()}</span>
               </div>
             )}
 
@@ -194,12 +222,12 @@ const Cadastro: React.FC = () => {
           </form>
         </div>
 
-        <footer style={styles.footer}>
+        <div style={styles.footer}>
           <div className="footerBadge">
               <Sparkles size={10} color={assets.accent} />
               <span>SISTEMA ATIVO: DIAMANTINA v2.6</span>
           </div>
-        </footer>
+        </div>
       </main>
     </div>
   );

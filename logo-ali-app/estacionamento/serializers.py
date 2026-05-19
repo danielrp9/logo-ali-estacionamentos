@@ -1,6 +1,7 @@
+import re
 from rest_framework import serializers
-from .models import Veiculo, Usuario
 from django.contrib.auth.password_validation import validate_password
+from .models import Veiculo, Usuario
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
@@ -12,6 +13,15 @@ class UserSerializer(serializers.ModelSerializer):
             'cidade', 'bairro', 'rua', 'numero', 'password', 'tipo_usuario'
         ]
         read_only_fields = ['tipo_usuario']
+
+    def validate_cpf(self, value):
+        """Normaliza o CPF removendo pontos, traços e espaços, mantendo apenas números"""
+        cpf_limpo = re.sub(r'\D', '', value)
+        
+        if len(cpf_limpo) != 11:
+            raise serializers.ValidationError("O CPF deve conter exatamente 11 dígitos numéricos.")
+            
+        return cpf_limpo
 
     def create(self, validated_data):
         user = Usuario.objects.create_user(
@@ -39,8 +49,16 @@ class VeiculoSerializer(serializers.ModelSerializer):
             'id', 'placa', 'modelo', 'cor', 'avarias', 
             'horario_entrada', 'horario_saida', 'usuario', 'usuario_detalhes', 'valor_atual'
         ]
-        # usuario agora não é read_only para permitir que o funcionário envie o ID do dono
         read_only_fields = ['horario_entrada']
+
+    def validate_placa(self, value):
+        """Normaliza a placa para caixa alta e remove espaços ou traços (Padrão Mercosul/Antigo)"""
+        placa_limpa = re.sub(r'[^A-Za-z0-9]', '', value).upper()
+        
+        if len(placa_limpa) != 7:
+            raise serializers.ValidationError("A placa deve conter exatamente 7 caracteres alfanuméricos.")
+            
+        return placa_limpa
 
     def get_valor_atual(self, obj):
         from django.utils import timezone

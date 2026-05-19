@@ -279,6 +279,7 @@ PORTARIA -> Path: /login/ | HTTPS: True | X-Forwarded-Proto: https | Needs HTTPS
 
 *Nota: O código de status HTTP 302 (Redirecionamento temporário) seguido do código 200 (OK) já trafegando sob a flag `HTTPS: True` atesta a eficácia operacional do barramento.*
 
+
 ---
 
 # Autor

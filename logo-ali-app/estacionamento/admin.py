@@ -50,14 +50,11 @@ class AuditAdminMixin:
             changes = []
             for field, old_value in old_data.items():
                 new_value = new_data.get(field)
-                # Verifica se o valor mudou e se está nos dados modificados do formulário
                 if new_value != old_value and field in form.changed_data:
                     changes.append(f"[{field}]: '{old_value}' → '{new_value}'")
             
             if changes:
                 change_msg = "VALORES: " + " | ".join(changes)
-                
-                # Obtém o ContentType de forma estável para o Django 5.1
                 ct = ContentType.objects.get_for_model(obj)
                 
                 LogEntry.objects.log_action(
