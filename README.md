@@ -1,8 +1,46 @@
- # Logo Ali Estacionamentos
+# Logo Ali Estacionamentos
 
-Sistema de **Gerenciamento Inteligente de Estacionamentos** desenvolvido como um ecossistema **Full-Stack (Django + React)** para a disciplina de **Segurança e Auditoria de Sistemas de Informação - SASI** na **Universidade Federal dos Vales do Jequitinhonha e Mucuri (UFVJM)**.
+O **Logo Ali** é um sistema para gerenciamento e automação de pátios de estacionamento de veículos (Django e React), desenvolvido como projeto prático para a disciplina de **Segurança e Auditoria de Sistemas de Informação - SASI**, ministrada pelo **Prof. Eduardo Pelli** no Departamento de Computação da **UFVJM**.
 
-O **Logo Ali** oferece controle de pátio em tempo real, auditoria de movimentação, integração com pagamentos via **Stripe** e segurança de tráfego baseada em **SSL Dual-Protocol**.
+---
+
+## 🎯 Tomadas de Decisão e Estratégia de Segurança
+
+O desenvolvimento do sistema foi guiado por decisões planejadas de engenharia de software e infraestrutura de segurança, buscando atender às restrições de desenvolvimento da ementa do projeto.
+
+### 1. Modelagem de Riscos baseada na PSI (Origem: TPI_SASI)
+O escopo do software dá continuidade à empresa fictícia de estacionamento automatizado estruturada no **TPI I** da disciplina. Com base na Política de Segurança da Informação (PSI) desenhada para o negócio, o foco do desenvolvimento foi centralizado na proteção dos pontos de falha e dados críticos do sistema: credenciais de acesso, CPFs de clientes e chaves de comunicação com a API do **Stripe**. 
+
+A página inicial do sistema apresenta a empresa e a sua respectiva PSI operando em HTTP padrão, servindo como uma interface institucional de baixo consumo de banda e processamento antes da autenticação.
+
+### 2. Arquitetura Dual-Protocol e Separação de Responsabilidades
+Para cumprir a exigência do projeto de não aplicar criptografia de forma global — prática que causaria overhead de processamento no servidor e acarretaria na perda de 60% da nota —, adotamos o modo **Dual-Protocol**:
+* **Abordagem Estrutural:** Alinhado aos princípios de Orientação a Objetos, a responsabilidade de impor a segurança do canal não foi pulverizada pelas Views e nem delegada ao Front-end (React). O controle foi centralizado em uma camada isolada no Backend para manter a manutenibilidade do código.
+* **Mecanismo de Controle:** Implementamos um **Middleware customizado (proxy)** no Django que funciona como um interceptador de requisições. Enquanto as páginas institucionais permanecem em HTTP para preservar o hardware, o middleware força o redirecionamento para HTTPS de forma cirúrgica apenas quando o usuário requisita rotas com dados sensíveis (endpoints de `login`, `cadastro`, `admin`, `clientes`, registros de `veiculo`, fluxos de `pagamento` do Stripe, `dashboard` e `historico`).
+
+### 3. Implementação da Camada de Transporte (OpenSSL + Nginx)
+Para viabilizar a alternância de protocolos em ambiente de desenvolvimento offline, utilizamos o **OpenSSL** para gerar uma estrutura local de chaves: uma chave privada RSA de 2048 bits, um Pedido de Assinatura de Certificado (CSR) com os metadados da *Logo Ali Estacionamentos* e um Certificado Autoassinado X.509.
+
+O **Nginx** foi configurado na frente da aplicação para atuar como proxy reverso e terminador TLS. Ele gerencia os blocos de escuta diretamente nas portas 80 (HTTP) e 443 (HTTPS), processa a criptografia na borda e repassa as requisições limpas internamente para o servidor do Django (porta 8000). Essa topologia local replica de forma realista o comportamento de uma Autoridade Certificadora (CA).**.
+
+---
+
+## 🎯 Foco Central do Trabalho e Alinhamento com a PSI
+
+O sistema foi inteiramente projetado para atender ao desafio de engenharia de software e infraestrutura deestipulado no comando da disciplina, estruturando-se através dos seguintes parâmetros:
+
+### 1. Modelo de Negócio e Política de Segurança (Origem: TPI_SASI)
+A aplicação reflete as operações e regras de controle da empresa de estacionamento estabelecida no primeiro trabalho prático (**TPI I**). O sistema disponibiliza uma **Página Social pública (em HTTP padrão)** que apresenta formalmente a empresa e a sua **Política de Segurança da Informação (PSI)**. Esta interface institucional serve como portal de entrada e direciona de forma segura os operadores para a tela de autenticação.
+
+### 2. Arquitetura Dual-Protocol (Otimização Dinâmica de Performance)
+Em cumprimento à exigência restrita de projeto — onde a aplicação global de criptografia acarretaria na perda de 60% da nota devido ao desperdício de processamento —, o ecossistema opera nativamente em modo **Dual-Protocol**:
+* **Canais em HTTP Puro:** Mantidos na página social e na exibição da política de segurança, mitigando o overhead de processamento de criptografia (*Handshake SSL/TLS*) in interfaces informativas que não coletam dados sigilosos.
+* **Canais em HTTPS Seguro:** Ativados de forma cirúrgica e obrigatória estritamente nas rotas que executam entrada ou manipulação de dados sensíveis (módulos de `login`, `cadastro`, `admin`, `clientes`, registros de `veiculo`, fluxos de `pagamento` integrados ao **Stripe**, monitoramento de `dashboard` e `historico`).
+
+### 3. Infraestrutura de Chaves Públicas e Preparação para Auditoria (TPIV_SASI)
+A segurança na camada de transporte (Transport Layer Security) foi estruturada de forma inteiramente offline, empregando a ferramenta **OpenSSL** para a criação de uma Infraestrutura de Chaves Públicas local. Foram geradas chaves privadas RSA de 2048 bits, Pedidos de Assinatura de Certificado (CSR) personalizados para a identidade da *Logo Ali Estacionamentos*, e a subsequente emissão do Certificado Autoassinado X.509 de desenvolvimento. 
+
+Essa infraestrutura e sua integração com o servidor Proxy Reverso (Nginx) encontram-se documentadas detalhadamente para subsidiar e fornecer total autonomia ao grupo que conduzirá a **Auditoria Cruzada (TPI IV)**.
 
 ---
 
